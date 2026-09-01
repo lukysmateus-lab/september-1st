@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Flow TV - Co-op Exam Challenge</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- Tone.js for Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top center, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+            color: #f8fafc;
+            user-select: none;
+        }
+
+        .heading-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .tv-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(16px);
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.7);
+        }
+
+        .btn-tv {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1);
+        }
+
+        .btn-tv:hover, .btn-tv:focus {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.5);
+        }
+
+        .btn-tv:active {
+            transform: scale(0.97);
+        }
+
+        .word-chip {
+            animation: popIn 0.25s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            100% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.8); }
+        }
+
+        /* Custom scrollbar for TV */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body class="h-full min-h-screen flex flex-col justify-between p-4 md:p-8 text-lg">
+
+    <!-- TOP TV HEADER -->
+    <header class="w-full max-w-7xl mx-auto mb-6">
+        <div class="tv-card rounded-3xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-8 border-pink-500">
+            
+            <!-- App Title & Exam Info -->
+            <div class="flex items-center gap-4 text-center md:text-left">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-3xl text-white shadow-lg shrink-0">
+                    <i class="fa-solid fa-tv"></i>
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-bold text-xs uppercase tracking-widest border border-pink-500/40">
+                        <i class="fa-solid fa-users text-amber-400"></i> TV Co-op Mode • Mind Flow Review
+                    </div>
+                    <h1 class="heading-font text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-cyan-300">
+                        EXAM REVIEW SHOWDOWN
+                    </h1>
+                    <p class="text-sm font-semibold text-slate-300">
+                        <span class="text-amber-400 font-bold"><i class="fa-solid fa-calendar-day mr-1"></i>PROVA PERIÓDICA: 04/09</span> 
+                        • MF1 (5A, 5C) & MF2 (1B, 1C, 1D)
+                    </p>
+                </div>
+            </div>
+
+            <!-- TV Interactive Scoreboard (Red Team vs Blue Team) -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-center bg-slate-900/90 p-3 rounded-2xl border-2 border-slate-700">
+                <!-- Team Red -->
+                <div class="text-center px-4 py-1 bg-red-950/60 rounded-xl border border-red-500/40">
+                    <div class="text-xs font-bold text-red-400 uppercase">Team Red</div>
+                    <div id="score-red" class="heading-font text-3xl font-black text-red-300">0</div>
+                    <button onclick="addScore('red', 10)" class="mt-1 px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-xs font-bold transition">+10</button>
+                </div>
+
+                <div class="text-xl font-black text-slate-500 px-1">VS</div>
+
+                <!-- Team Blue -->
+                <div class="text-center px-4 py-1 bg-blue-950/60 rounded-xl border border-blue-500/40">
+                    <div class="text-xs font-bold text-blue-400 uppercase">Team Blue</div>
+                    <div id="score-blue" class="heading-font text-3xl font-black text-blue-300">0</div>
+                    <button onclick="addScore('blue', 10)" class="mt-1 px-2 py-0.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">+10</button>
+                </div>
+
+                <!-- Randomizer / Tools Button -->
+                <div class="pl-2 border-l border-slate-700 flex flex-col gap-1">
+                    <button onclick="openPickerModal()" class="btn-tv px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-dice text-amber-300"></i> Who's Next?
+                    </button>
+                    <button onclick="toggleAudio()" id="audio-btn" class="btn-tv px-3 py-2 bg-slate-800 text-slate-300 hover:text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-volume-high text-cyan-400"></i> Sound ON
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- TV TOPIC NAVIGATION BAR -->
+    <nav class="w-full max-w-7xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <button onclick="switchTab('tab-future')" id="btn-tab-future" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg border-2 border-amber-300">
+            <i class="fa-solid fa-clock-rotate-left text-2xl"></i> 1. Future Cont.
+        </button>
+        <button onclick="switchTab('tab-rules')" id="btn-tab-rules" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
+            <i class="fa-solid fa-gavel text-2xl text-emerald-400"></i> 2. Rules (Make/Let)
+        </button>
+        <button onclick="switchTab('tab-tech')" id="btn-tab-tech" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
+            <i class="fa-solid fa-mobile-screen-button text-2xl text-cyan-400"></i> 3. Digital Life
+        </button>
+        <button onclick="switchTab('tab-adjectives')" id="btn-tab-adjectives" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
+            <i class="fa-solid fa-shirt text-2xl text-pink-400"></i> 4. Order Adjectives
+        </button>
+        <button onclick="switchTab('tab-gerund')" id="btn-tab-gerund" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
+            <i class="fa-solid fa-graduation-cap text-2xl text-purple-400"></i> 5. Gerund / Infinitive
+        </button>
+    </nav>
+
+    <!-- MAIN GAME DISPLAY AREA -->
+    <main class="w-full max-w-7xl mx-auto flex-1 mb-6">
+
+        <!-- TAB 1: FUTURE CONTINUOUS (BUILDER GAME) -->
+        <section id="tab-future" class="tab-content space-y-6">
+            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-amber-500/40">
+                
+                <!-- Topic Intro Banner -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-amber-950/50 p-4 rounded-2xl border border-amber-500/30 mb-6">
+                    <div>
+                        <span class="px-3 py-1 bg-amber-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 2 - Lesson 1B</span>
+                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-amber-300 mt-1">
+                            <i class="fa-solid fa-bolt mr-2"></i>Future Continuous Sentence Construction
+                        </h2>
+                        <p class="text-base text-slate-200 mt-1">
+                            Rule: <span class="text-amber-300 font-extrabold bg-slate-900/80 px-2 py-0.5 rounded">Subject + WILL BE / WON'T BE + VERB(-ING)</span>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="prevFutureEx()" class="btn-tv px-4 py-2 bg-slate-800 text-white rounded-xl font-bold border border-slate-600"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+                        <span id="future-step-indicator" class="font-black text-amber-400 text-lg px-2">1 / 5</span>
+                        <button onclick="nextFutureEx()" class="btn-tv px-4 py-2 bg-amber-500 text-slate-950 rounded-xl font-extrabold"><i class="fa-solid fa-arrow-right"></i> Next</button>
+                    </div>
+                </div>
+
+                <!-- TV Interactive Builder -->
+                <div id="future-game-card" class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
+                    <!-- Context Prompt -->
+                    <div class="text-center space-y-2">
+                        <div id="future-context" class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 inline-block px-3 py-1 rounded-full border border-amber-500/30">
+                            SPACE MISSION 2030
+                        </div>
+                        <div id="future-prompt" class="text-2xl md:text-3xl font-black text-white leading-relaxed">
+                            "At 8:00 PM tonight, the astronauts __________ towards Mars."
+                        </div>
+                    </div>
+
+                    <!-- Selected Target Box -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border-2 border-dashed border-amber-400/60 min-h-[80px] flex flex-wrap items-center justify-center gap-3" id="future-answer-zone">
+                        <span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>
+                    </div>
+
+                    <!-- Available Word Chips -->
+                    <div class="flex flex-wrap justify-center gap-3 pt-2" id="future-options-zone">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+
+                    <!-- Actions & Feedback -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+                        <button onclick="resetFutureBuilder()" class="btn-tv px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-sm">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Clear Blocks
+                        </button>
+                        
+                        <div id="future-feedback" class="text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center"></div>
+
+                        <button onclick="checkFutureBuilder()" class="btn-tv px-8 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black rounded-2xl text-lg shadow-xl">
+                            <i class="fa-solid fa-circle-check mr-2"></i> Check Answer
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: RULES (MAKE / LET / BE ALLOWED TO) -->
+        <section id="tab-rules" class="tab-content hidden space-y-6">
+            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-emerald-500/40">
+                
+                <!-- Topic Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-950/50 p-4 rounded-2xl border border-emerald-500/30 mb-6">
+                    <div>
+                        <span class="px-3 py-1 bg-emerald-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 1 - Lesson 5A & 5C</span>
+                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-emerald-300 mt-1">
+                            <i class="fa-solid fa-shield-halved mr-2"></i>Rules Transformer: Make, Let & Be Allowed To
+                        </h2>
+                        <p class="text-sm text-slate-200 mt-1">
+                            <span class="text-emerald-300 font-bold">• MAKE someone do</span> (Obligation) | 
+                            <span class="text-cyan-300 font-bold">• LET someone do</span> (Permission) | 
+                            <span class="text-pink-300 font-bold">• BE ALLOWED TO do</span> (Rule)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Challenge Cards Grid -->
+                <div class="grid grid-cols-1 gap-6" id="rules-cards-container">
+                    <!-- Populated by JS -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: DIGITAL LIFE (VOCABULARY & ACTION SHOWDOWN) -->
+        <section id="tab-tech" class="tab-content hidden space-y-6">
+            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-cyan-500/40">
+                
+                <!-- Topic Header -->
+                <div class="bg-cyan-950/50 p-4 rounded-2xl border border-cyan-500/30 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-cyan-400 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 2 - Lesson 1C & 1D</span>
+                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-cyan-300 mt-1">
+                            <i class="fa-solid fa-hashtag mr-2"></i>Digital Life Verbs & Expressions
+                        </h2>
+                        <p class="text-sm text-slate-200 mt-1">
+                            Target Verbs: <strong class="text-cyan-300">BROWSE</strong> • <strong class="text-cyan-300">POST</strong> • <strong class="text-cyan-300">SEND</strong> • <strong class="text-cyan-300">DOWNLOAD</strong> • <strong class="text-cyan-300">UPLOAD</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Big TV Action Verb Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6" id="tech-verbs-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Co-op Sentence Matcher -->
+                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
+                    <h3 class="heading-font text-xl font-black text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad"></i> Complete the Tech Action Challenge
+                    </h3>
+                    
+                    <div id="tech-questions-container" class="space-y-4">
+                        <!-- Dynamic tech questions -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 4: ORDER OF ADJECTIVES (BUILDER & VISUALIZER) -->
+        <section id="tab-adjectives" class="tab-content hidden space-y-6">
+            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-pink-500/40">
+                
+                <!-- Rule Formula Display Bar -->
+                <div class="bg-gradient-to-r from-pink-950/80 via-purple-950/80 to-slate-900 p-5 rounded-2xl border-2 border-pink-500/40 mb-6 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="px-3 py-1 bg-pink-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Grammar Rule Formula</span>
+                        <span class="text-xs text-slate-300 font-bold">OPINIONS FIRST • NOUN LAST</span>
+                    </div>
+                    
+                    <!-- Adjective Sequence Banner -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-black">
+                        <div class="p-2 bg-pink-500/20 border border-pink-400 rounded-xl text-pink-300">
+                            1. OPINION
+                            <span class="block text-[10px] font-normal text-slate-300">cool, beautiful, awful</span>
+                        </div>
+                        <div class="p-2 bg-purple-500/20 border border-purple-400 rounded-xl text-purple-300">
+                            2. COLOR
+                            <span class="block text-[10px] font-normal text-slate-300">red, black, navy blue</span>
+                        </div>
+                        <div class="p-2 bg-indigo-500/20 border border-indigo-400 rounded-xl text-indigo-300">
+                            3. PATTERN
+                            <span class="block text-[10px] font-normal text-slate-300">striped, spotted, plain</span>
+                        </div>
+                        <div class="p-2 bg-cyan-500/20 border border-cyan-400 rounded-xl text-cyan-300">
+                            4. MATERIAL
+                            <span class="block text-[10px] font-normal text-slate-300">leather, cotton, silk</span>
+                        </div>
+                        <div class="p-2 bg-emerald-500/20 border border-emerald-400 rounded-xl text-emerald-300">
+                            5. STYLE / TYPE
+                            <span class="block text-[10px] font-normal text-slate-300">casual, retro, sports</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Adjective Cards Container (All 6 Items on the same page) -->
+                <div id="adj-cards-container" class="space-y-6">
+                    <!-- Dynamic multi-card list generated by JS -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 5: GERUND VS INFINITIVE (VERB PATTERNS & PREPOSITIONS) -->
+        <section id="tab-gerund" class="tab-content hidden space-y-6">
+            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-purple-500/40">
+                
+                <!-- Topic Intro Banner -->
+                <div class="bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-slate-900 p-5 rounded-2xl border-2 border-purple-500/40 mb-6 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="px-3 py-1 bg-purple-500 text-white font-black rounded-lg text-xs uppercase tracking-wider">Verb Patterns & Rules</span>
+                        <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>PROVA PERIÓDICA TOPIC</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                        <div class="p-3 bg-purple-900/40 border border-purple-500/50 rounded-xl">
+                            <strong class="text-purple-300 block text-base font-extrabold mb-1">1. GERUND (-ing)</strong>
+                            <p class="text-xs text-slate-300">After verbs: <em>enjoy, avoid, finish, practise, dislike, mind, keep, suggest, consider</em>.</p>
+                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: I enjoy playing games.</span>
+                        </div>
+                        <div class="p-3 bg-indigo-900/40 border border-indigo-500/50 rounded-xl">
+                            <strong class="text-indigo-300 block text-base font-extrabold mb-1">2. INFINITIVE (to + verb)</strong>
+                            <p class="text-xs text-slate-300">After verbs: <em>want, decide, hope, promise, agree, refuse, plan, learn, offer</em>.</p>
+                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: She decided to study abroad.</span>
+                        </div>
+                        <div class="p-3 bg-cyan-900/40 border border-cyan-500/50 rounded-xl">
+                            <strong class="text-cyan-300 block text-base font-extrabold mb-1">3. AFTER PREPOSITIONS</strong>
+                            <p class="text-xs text-slate-300">After prepositions (<em>about, at, in, of, for</em>) always use <strong>GERUND (-ing)</strong>!</p>
+                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: Good at speaking, interested in buying.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question Cards Grid -->
+                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <h3 class="heading-font text-2xl font-black text-purple-300 flex items-center gap-2">
+                            <i class="fa-solid fa-puzzle-piece"></i> Complete with Gerund (-ing) or Infinitive (to...)
+                        </h3>
+                        <span class="text-xs font-extrabold text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                            Questions & Options randomized on startup!
+                        </span>
+                    </div>
+
+                    <div id="gerund-questions-container" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RANDOM STUDENT / PAIR PICKER MODAL -->
+    <div id="picker-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
+        <div class="tv-card max-w-xl w-full rounded-3xl p-6 border-4 border-purple-500 text-center space-y-6 relative shadow-2xl">
+            <button onclick="closePickerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="w-20 h-20 bg-purple-500/20 text-purple-400 rounded-3xl flex items-center justify-center mx-auto text-4xl border-2 border-purple-400">
+                <i class="fa-solid fa-dice"></i>
+            </div>
+
+            <div>
+                <h3 class="heading-font text-3xl font-extrabold text-white">WHO ANSWERS NEXT?</h3>
+                <p class="text-sm text-slate-300 mt-1">Spin to choose a student number or team for the current question on TV!</p>
+            </div>
+
+            <!-- Display Box -->
+            <div id="picker-display" class="bg-slate-900 border-2 border-amber-400 rounded-2xl p-6 text-3xl font-black text-amber-300 min-h-[100px] flex items-center justify-center pulse-glow">
+                READY TO SPIN!
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="spinPicker('student')" class="flex-1 py-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-sm transition btn-tv">
+                    <i class="fa-solid fa-user mr-1"></i> Pick Student #
+                </button>
+                <button onclick="spinPicker('team')" class="flex-1 py-3 bg-pink-600 hover:bg-pink-500 text-white font-black rounded-xl text-sm transition btn-tv">
+                    <i class="fa-solid fa-users mr-1"></i> Pick Team
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-7xl mx-auto text-center text-slate-400 text-xs py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div><i class="fa-solid fa-chalkboard-user mr-1"></i> Designed for TV Projection & Classroom Co-op Practice</div>
+        <div class="font-bold text-amber-400">PROVA PERIÓDICA • 04/09</div>
+    </footer>
+
+    <script>
+        // Utility function to randomize arrays (questions & options)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        let audioEnabled = true;
+
+        // Tone.js Synth setup for game audio effects
+        const synth = new Tone.Synth().toDestination();
+
+        function playSound(type) {
+            if(!audioEnabled) return;
+            try {
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                if(type === 'correct') {
+                    synth.triggerAttackRelease("C5", "8n");
+                    setTimeout(() => synth.triggerAttackRelease("G5", "8n"), 100);
+                } else if(type === 'wrong') {
+                    synth.triggerAttackRelease("G3", "8n");
+                    setTimeout(() => synth.triggerAttackRelease("C3", "8n"), 100);
+                } else if(type === 'click') {
+                    synth.triggerAttackRelease("E5", "16n");
+                } else if(type === 'fanfare') {
+                    synth.triggerAttackRelease("C5", "8n");
+                    setTimeout(() => synth.triggerAttackRelease("E5", "8n"), 120);
+                    setTimeout(() => synth.triggerAttackRelease("G5", "4n"), 240);
+                }
+            } catch(e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-btn');
+            if(audioEnabled) {
+                btn.innerHTML = `<i class="fa-solid fa-volume-high text-cyan-400"></i> Sound ON`;
+                playSound('click');
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-volume-xmark text-slate-500"></i> Sound OFF`;
+            }
+        }
+
+        // --- SCOREBOARD ---
+        let scoreRed = 0;
+        let scoreBlue = 0;
+
+        function addScore(team, pts) {
+            playSound('fanfare');
+            if(team === 'red') {
+                scoreRed += pts;
+                document.getElementById('score-red').innerText = scoreRed;
+            } else {
+                scoreBlue += pts;
+                document.getElementById('score-blue').innerText = scoreBlue;
+            }
+        }
+
+        // --- TAB NAVIGATION ---
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700";
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) {
+                activeBtn.className = "nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg border-2 border-amber-300";
+            }
+        }
+
+        // --- TAB 1: FUTURE CONTINUOUS DATA & LOGIC ---
+        let futureData = [
+            {
+                context: "SPACE MISSION 2030",
+                prompt: "At 8:00 PM tonight, the astronauts __________ towards Mars.",
+                correct: ["will", "be", "flying"],
+                options: ["will", "be", "flying", "are", "flown", "fly"],
+                fullText: "will be flying"
+            },
+            {
+                context: "FUTURE SCHOOL",
+                prompt: "Tomorrow at noon, students __________ digital exams on tablets.",
+                correct: ["will", "be", "taking"],
+                options: ["will", "be", "taking", "won't", "took", "takes"],
+                fullText: "will be taking"
+            },
+            {
+                context: "WEEKEND PLAN",
+                prompt: "At this exact time tomorrow, I __________ video games with my team.",
+                correct: ["will", "be", "playing"],
+                options: ["will", "be", "playing", "am", "played", "play"],
+                fullText: "will be playing"
+            },
+            {
+                context: "NEGATIVE FUTURE CONTINUOUS",
+                prompt: "Don't call her at 11 PM. She __________ in her bedroom.",
+                correct: ["won't", "be", "studying"],
+                options: ["won't", "be", "studying", "will", "study", "is"],
+                fullText: "won't be studying"
+            },
+            {
+                context: "LIVE CONCERT",
+                prompt: "At 9 PM on Saturday, the band __________ their new song live.",
+                correct: ["will", "be", "performing"],
+                options: ["will", "be", "performing", "perform", "are", "performed"],
+                fullText: "will be performing"
+            }
+        ];
+
+        let currentFutureIdx = 0;
+        let selectedFutureWords = [];
+
+        function renderFutureEx() {
+            const ex = futureData[currentFutureIdx];
+            document.getElementById('future-step-indicator').innerText = `${currentFutureIdx + 1} / ${futureData.length}`;
+            document.getElementById('future-context').innerText = ex.context;
+            document.getElementById('future-prompt').innerText = `"${ex.prompt}"`;
+            
+            selectedFutureWords = [];
+            const answerZone = document.getElementById('future-answer-zone');
+            answerZone.innerHTML = `<span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>`;
+
+            const optionsZone = document.getElementById('future-options-zone');
+            optionsZone.innerHTML = ex.options.map((w, idx) => `
+                <button id="future-opt-${idx}" onclick="addFutureWord('${w}', ${idx})" 
+                        class="word-chip btn-tv px-5 py-3 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border-2 border-amber-400/40 text-amber-300 font-black text-xl rounded-2xl shadow">
+                    ${w}
+                </button>
+            `).join('');
+
+            const feedback = document.getElementById('future-feedback');
+            feedback.className = "text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center";
+            feedback.innerText = "";
+        }
+
+        function addFutureWord(word, optIdx) {
+            playSound('click');
+            const placeholder = document.getElementById('future-placeholder');
+            if(placeholder) placeholder.remove();
+
+            const btnOpt = document.getElementById(`future-opt-${optIdx}`);
+            if(btnOpt) btnOpt.classList.add('opacity-30', 'pointer-events-none');
+
+            selectedFutureWords.push({ word, optIdx });
+            updateFutureAnswerZone();
+        }
+
+        function removeFutureWord(index) {
+            playSound('click');
+            const removed = selectedFutureWords.splice(index, 1)[0];
+            if(removed) {
+                const btnOpt = document.getElementById(`future-opt-${removed.optIdx}`);
+                if(btnOpt) btnOpt.classList.remove('opacity-30', 'pointer-events-none');
+            }
+            updateFutureAnswerZone();
+        }
+
+        function updateFutureAnswerZone() {
+            const answerZone = document.getElementById('future-answer-zone');
+            if(selectedFutureWords.length === 0) {
+                answerZone.innerHTML = `<span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>`;
+                return;
+            }
+
+            answerZone.innerHTML = selectedFutureWords.map((item, idx) => `
+                <button onclick="removeFutureWord(${idx})" class="word-chip px-5 py-3 bg-amber-500 text-slate-950 font-black text-xl rounded-2xl border-2 border-amber-300 shadow flex items-center gap-2">
+                    <span>${item.word}</span>
+                    <i class="fa-solid fa-xmark text-sm opacity-70"></i>
+                </button>
+            `).join('');
+        }
+
+        function resetFutureBuilder() {
+            playSound('click');
+            selectedFutureWords.forEach(item => {
+                const btnOpt = document.getElementById(`future-opt-${item.optIdx}`);
+                if(btnOpt) btnOpt.classList.remove('opacity-30', 'pointer-events-none');
+            });
+            selectedFutureWords = [];
+            updateFutureAnswerZone();
+            
+            const feedback = document.getElementById('future-feedback');
+            feedback.className = "text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center";
+        }
+
+        function checkFutureBuilder() {
+            const ex = futureData[currentFutureIdx];
+            const userSeq = selectedFutureWords.map(s => s.word);
+            const feedback = document.getElementById('future-feedback');
+            feedback.classList.remove('hidden', 'bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500', 'bg-rose-500/20', 'text-rose-300', 'border-rose-500');
+
+            if (JSON.stringify(userSeq) === JSON.stringify(ex.correct)) {
+                playSound('correct');
+                feedback.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> PERFECT! "${ex.fullText}"`;
+            } else {
+                playSound('wrong');
+                feedback.classList.add('bg-rose-500/20', 'text-rose-300', 'border', 'border-rose-500');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-2"></i> NOT QUITE. Expected: "${ex.correct.join(' ')}"`;
+            }
+        }
+
+        function nextFutureEx() {
+            if(currentFutureIdx < futureData.length - 1) {
+                currentFutureIdx++;
+                renderFutureEx();
+            }
+        }
+
+        function prevFutureEx() {
+            if(currentFutureIdx > 0) {
+                currentFutureIdx--;
+                renderFutureEx();
+            }
+        }
+
+        // --- TAB 2: RULES DATA & LOGIC ---
+        let rulesData = [
+            {
+                id: 'r1',
+                type: 'MAKE (Obligation)',
+                badge: 'MAKE',
+                badgeColor: 'bg-emerald-500 text-slate-950',
+                scenario: 'The teacher forces us to turn off our mobile phones during the test.',
+                question: 'Rewrite using "MAKE":',
+                options: [
+                    { text: 'The teacher makes us turn off our phones.', correct: true },
+                    { text: 'The teacher makes us to turn off our phones.', correct: false },
+                    { text: 'The teacher is made us turn off our phones.', correct: false }
+                ]
+            },
+            {
+                id: 'r2',
+                type: 'LET (Permission)',
+                badge: 'LET',
+                badgeColor: 'bg-cyan-400 text-slate-950',
+                scenario: 'My parents give me permission to play video games on weekends.',
+                question: 'Rewrite using "LET":',
+                options: [
+                    { text: 'My parents let me to play video games.', correct: false },
+                    { text: 'My parents let me play video games.', correct: true },
+                    { text: 'My parents lets me playing video games.', correct: false }
+                ]
+            },
+            {
+                id: 'r3',
+                type: 'BE ALLOWED TO (Rule)',
+                badge: 'BE ALLOWED TO',
+                badgeColor: 'bg-pink-500 text-white',
+                scenario: 'Students do NOT have permission to wear caps inside the classroom.',
+                question: 'Rewrite using "NOT ALLOWED TO":',
+                options: [
+                    { text: 'Students aren\'t allowed to wear caps in class.', correct: true },
+                    { text: 'Students don\'t allowed to wear caps in class.', correct: false },
+                    { text: 'Students aren\'t allow wearing caps in class.', correct: false }
+                ]
+            }
+        ];
+
+        function renderRulesData() {
+            const container = document.getElementById('rules-cards-container');
+            if(!container) return;
+            container.innerHTML = rulesData.map(r => `
+                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 font-black rounded-lg text-xs uppercase ${r.badgeColor}">${r.badge}</span>
+                        <span class="text-xs text-slate-400 font-bold">${r.type}</span>
+                    </div>
+                    <div class="text-xl font-bold text-slate-200">
+                        <i class="fa-solid fa-quote-left text-emerald-400 mr-2"></i>${r.scenario}
+                    </div>
+                    <div class="text-base font-extrabold text-emerald-300">${r.question}</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        ${r.options.map((opt) => `
+                            <button onclick="checkRuleChoice(this, ${opt.correct})" class="btn-tv p-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-base rounded-xl border-2 border-slate-600 text-left transition">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function checkRuleChoice(btn, isCorrect) {
+            if(isCorrect) {
+                playSound('correct');
+                btn.className = "btn-tv p-4 bg-emerald-600 text-white font-black text-base rounded-xl border-2 border-emerald-300 text-left shadow-lg";
+            } else {
+                playSound('wrong');
+                btn.className = "btn-tv p-4 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 text-left opacity-70";
+            }
+        }
+
+        // --- TAB 3: DIGITAL LIFE DATA & LOGIC ---
+        const techVerbs = [
+            { verb: 'BROWSE', icon: 'fa-compass', desc: 'Browse the internet / websites' },
+            { verb: 'POST', icon: 'fa-share-nodes', desc: 'Post photos / comments on social media' },
+            { verb: 'SEND', icon: 'fa-paper-plane', desc: 'Send text / voice messages' },
+            { verb: 'DOWNLOAD', icon: 'fa-circle-arrow-down', desc: 'Download games / apps / files' },
+            { verb: 'UPLOAD', icon: 'fa-circle-arrow-up', desc: 'Upload videos / photos to cloud' }
+        ];
+
+        let techQuiz = [
+            {
+                q: '1. Whenever I travel, I take a selfie and _____ it on social network sites.',
+                answer: 'POST',
+                options: ['POST', 'DOWNLOAD', 'BROWSE']
+            },
+            {
+                q: '2. Late at night, I like to _____ the internet for new gaming news.',
+                answer: 'BROWSE',
+                options: ['SEND', 'BROWSE', 'UPLOAD']
+            },
+            {
+                q: '3. I need fast Wi-Fi so I can _____ this new 2GB game onto my tablet.',
+                answer: 'DOWNLOAD',
+                options: ['DOWNLOAD', 'POST', 'SEND']
+            },
+            {
+                q: '4. Don\'t forget to _____ your video project to Google Drive before midnight.',
+                answer: 'UPLOAD',
+                options: ['UPLOAD', 'BROWSE', 'POST']
+            },
+            {
+                q: '5. Can you _____ me a text message when you arrive at school?',
+                answer: 'SEND',
+                options: ['SEND', 'DOWNLOAD', 'UPLOAD']
+            },
+            {
+                q: '6. I want to _____ for cool new wallpapers on Google.',
+                answer: 'SEARCH',
+                options: ['SEARCH', 'POST', 'SEND']
+            },
+            {
+                q: '7. We like to _____ live gaming streams on Twitch during the weekend.',
+                answer: 'STREAM',
+                options: ['STREAM', 'BROWSE', 'SEND']
+            },
+            {
+                q: '8. Make sure to _____ the PDF document to the email before sending it.',
+                answer: 'ATTACH',
+                options: ['ATTACH', 'UPLOAD', 'POST']
+            },
+            {
+                q: '9. She loves to _____ interesting news articles on social media with her friends.',
+                answer: 'SHARE',
+                options: ['SHARE', 'DOWNLOAD', 'BROWSE']
+            },
+            {
+                q: '10. Always remember to _____ out of your computer account in the school lab.',
+                answer: 'LOG OUT',
+                options: ['LOG OUT', 'UPLOAD', 'SEND']
+            }
+        ];
+
+        function renderTechData() {
+            const verbsGrid = document.getElementById('tech-verbs-grid');
+            if(verbsGrid) {
+                verbsGrid.innerHTML = techVerbs.map(v => `
+                    <div class="bg-slate-900/90 border-2 border-cyan-500/30 p-4 rounded-2xl text-center space-y-2">
+                        <div class="w-12 h-12 bg-cyan-500/20 text-cyan-300 rounded-xl flex items-center justify-center mx-auto text-2xl">
+                            <i class="fa-solid ${v.icon}"></i>
+                        </div>
+                        <div class="font-black text-lg text-white">${v.verb}</div>
+                        <div class="text-xs text-slate-400">${v.desc}</div>
+                    </div>
+                `).join('');
+            }
+
+            const qContainer = document.getElementById('tech-questions-container');
+            if(qContainer) {
+                qContainer.innerHTML = techQuiz.map((item) => `
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+                        <p class="text-lg font-bold text-slate-200">${item.q}</p>
+                        <div class="flex flex-wrap gap-3">
+                            ${item.options.map(opt => `
+                                <button onclick="checkTechChoice(this, '${opt}', '${item.answer}')" class="btn-tv px-6 py-2 bg-slate-800 hover:bg-cyan-600 text-white font-extrabold text-base rounded-xl border border-slate-600">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function checkTechChoice(btn, selected, correct) {
+            if(selected === correct) {
+                playSound('correct');
+                btn.className = "btn-tv px-6 py-2 bg-cyan-500 text-slate-950 font-black text-base rounded-xl border-2 border-cyan-300 shadow-lg";
+            } else {
+                playSound('wrong');
+                btn.className = "btn-tv px-6 py-2 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 opacity-60";
+            }
+        }
+
+        // --- TAB 4: ORDER OF ADJECTIVES DATA & LOGIC ---
+        // Formula Sequence: 1. Opinion -> 2. Color -> 3. Pattern -> 4. Material -> 5. Style/Type
+        let adjItems = [
+            {
+                title: "Fashion Item #1",
+                item: "JACKET",
+                correctChain: ["cool", "black", "striped", "leather", "biker"],
+                scrambled: ["striped", "biker", "cool", "leather", "black"],
+                types: { cool: "Opinion", black: "Color", striped: "Pattern", leather: "Material", biker: "Style" },
+                selected: []
+            },
+            {
+                title: "Fashion Item #2",
+                item: "SHIRT",
+                correctChain: ["beautiful", "red", "spotted", "silk", "casual"],
+                scrambled: ["red", "beautiful", "casual", "silk", "spotted"],
+                types: { beautiful: "Opinion", red: "Color", spotted: "Pattern", silk: "Material", casual: "Style" },
+                selected: []
+            },
+            {
+                title: "Fashion Item #3",
+                item: "DRESS",
+                correctChain: ["elegant", "blue", "floral", "cotton", "summer"],
+                scrambled: ["cotton", "blue", "summer", "elegant", "floral"],
+                types: { elegant: "Opinion", blue: "Color", floral: "Pattern", cotton: "Material", summer: "Style" },
+                selected: []
+            },
+            {
+                title: "Fashion Item #4",
+                item: "SNEAKERS",
+                correctChain: ["awesome", "white", "plain", "canvas", "sports"],
+                scrambled: ["sports", "awesome", "plain", "white", "canvas"],
+                types: { awesome: "Opinion", white: "Color", plain: "Pattern", canvas: "Material", sports: "Style" },
+                selected: []
+            },
+            {
+                title: "Fashion Item #5",
+                item: "HAT",
+                correctChain: ["lovely", "brown", "checked", "wool", "vintage"],
+                scrambled: ["wool", "checked", "vintage", "lovely", "brown"],
+                types: { lovely: "Opinion", brown: "Color", checked: "Pattern", wool: "Material", vintage: "Style" },
+                selected: []
+            },
+            {
+                title: "Fashion Item #6",
+                item: "COAT",
+                correctChain: ["stylish", "gray", "plaid", "denim", "winter"],
+                scrambled: ["plaid", "stylish", "winter", "gray", "denim"],
+                types: { stylish: "Opinion", gray: "Color", plaid: "Pattern", denim: "Material", winter: "Style" },
+                selected: []
+            }
+        ];
+
+        function renderAdjGame() {
+            const container = document.getElementById('adj-cards-container');
+            if(!container) return;
+
+            container.innerHTML = adjItems.map((adj, itemIdx) => `
+                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-black uppercase text-pink-400 bg-pink-950/60 px-3 py-1 rounded-full border border-pink-500/30">
+                            ${adj.title}
+                        </span>
+                        <span class="heading-font text-2xl font-black text-amber-300">Target Item: ${adj.item}</span>
+                    </div>
+
+                    <!-- Target Sentence Dropzone -->
+                    <div class="bg-slate-950 p-4 rounded-xl border-2 border-dashed border-pink-400/50 min-h-[70px] flex flex-wrap items-center justify-center gap-2">
+                        ${adj.selected.length === 0 
+                            ? `<span class="text-slate-500 italic text-sm">Click adjectives in correct order (1. Opinion → 2. Color → 3. Pattern → 4. Material → 5. Style)</span>`
+                            : adj.selected.map((word, wIdx) => `
+                                <button onclick="removeAdjWord(${itemIdx}, ${wIdx})" class="px-4 py-2 bg-pink-500 text-slate-950 font-black rounded-xl text-base shadow flex items-center gap-1.5 btn-tv">
+                                    <span>${word}</span>
+                                    <span class="text-[10px] bg-slate-950/40 text-white px-1.5 py-0.5 rounded">${adj.types[word] || ''}</span>
+                                    <i class="fa-solid fa-xmark text-xs opacity-70"></i>
+                                </button>
+                            `).join('')
+                        }
+                    </div>
+
+                    <!-- Scrambled Words -->
+                    <div class="flex flex-wrap justify-center gap-2">
+                        ${adj.scrambled.map((w, wIdx) => {
+                            const isSelected = adj.selected.includes(w);
+                            return `
+                                <button onclick="selectAdjWord(${itemIdx}, '${w}')" ${isSelected ? 'disabled' : ''} 
+                                        class="btn-tv px-4 py-2 ${isSelected ? 'opacity-30 bg-slate-800 text-slate-500' : 'bg-slate-800 hover:bg-pink-600 text-pink-300 hover:text-white'} font-bold text-base rounded-xl border border-slate-600">
+                                    ${w}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Actions & Feedback -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
+                        <button onclick="resetAdjItem(${itemIdx})" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                        </button>
+                        
+                        <div id="adj-feedback-${itemIdx}" class="text-sm font-extrabold hidden px-3 py-1 rounded-lg"></div>
+
+                        <button onclick="checkAdjAnswer(${itemIdx})" class="px-5 py-2 bg-pink-500 hover:bg-pink-400 text-slate-950 font-black rounded-xl text-sm shadow btn-tv">
+                            Check Sequence
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectAdjWord(itemIdx, word) {
+            playSound('click');
+            adjItems[itemIdx].selected.push(word);
+            renderAdjGame();
+        }
+
+        function removeAdjWord(itemIdx, wordIdx) {
+            playSound('click');
+            adjItems[itemIdx].selected.splice(wordIdx, 1);
+            renderAdjGame();
+        }
+
+        function resetAdjItem(itemIdx) {
+            playSound('click');
+            adjItems[itemIdx].selected = [];
+            renderAdjGame();
+        }
+
+        function checkAdjAnswer(itemIdx) {
+            const adj = adjItems[itemIdx];
+            const feedback = document.getElementById(`adj-feedback-${itemIdx}`);
+            feedback.classList.remove('hidden', 'bg-emerald-500/20', 'text-emerald-300', 'bg-rose-500/20', 'text-rose-300');
+
+            if (JSON.stringify(adj.selected) === JSON.stringify(adj.correctChain)) {
+                playSound('correct');
+                feedback.classList.add('bg-emerald-500/20', 'text-emerald-300');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Perfect Order! "${adj.selected.join(' ')} ${adj.item}"`;
+            } else {
+                playSound('wrong');
+                feedback.classList.add('bg-rose-500/20', 'text-rose-300');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect sequence! Correct: ${adj.correctChain.join(' ')}`;
+            }
+        }
+
+        // --- TAB 5: GERUND VS INFINITIVE DATA & LOGIC ---
+        let gerundData = [
+            {
+                q: "1. She avoids _____ (talk) to strangers on social media.",
+                correct: "talking",
+                rule: "Verb 'avoid' requires Gerund (-ing)",
+                options: ["talking", "to talk", "talk"]
+            },
+            {
+                q: "2. We decided _____ (visit) our grandparents this weekend.",
+                correct: "to visit",
+                rule: "Verb 'decide' requires Infinitive (to + verb)",
+                options: ["to visit", "visiting", "visit"]
+            },
+            {
+                q: "3. Are you interested in _____ (learn) how to code games?",
+                correct: "learning",
+                rule: "After preposition 'in', use Gerund (-ing)",
+                options: ["learning", "to learn", "learn"]
+            },
+            {
+                q: "4. He promised _____ (finish) his English homework before 8 PM.",
+                correct: "to finish",
+                rule: "Verb 'promise' requires Infinitive (to + verb)",
+                options: ["to finish", "finishing", "finished"]
+            },
+            {
+                q: "5. I really enjoy _____ (listen) to music while studying.",
+                correct: "listening",
+                rule: "Verb 'enjoy' requires Gerund (-ing)",
+                options: ["listening", "to listen", "listen"]
+            },
+            {
+                q: "6. They hope _____ (pass) the Mind Flow prova periódica on 04/09.",
+                correct: "to pass",
+                rule: "Verb 'hope' requires Infinitive (to + verb)",
+                options: ["to pass", "passing", "pass"]
+            },
+            {
+                q: "7. She is good at _____ (draw) digital illustrations.",
+                correct: "drawing",
+                rule: "After preposition 'at', use Gerund (-ing)",
+                options: ["drawing", "to draw", "draw"]
+            },
+            {
+                q: "8. Do you mind _____ (open) the window for a minute?",
+                correct: "opening",
+                rule: "Verb 'mind' requires Gerund (-ing)",
+                options: ["opening", "to open", "open"]
+            },
+            {
+                q: "9. Lucas refused _____ (give) his password to anyone.",
+                correct: "to give",
+                rule: "Verb 'refuse' requires Infinitive (to + verb)",
+                options: ["to give", "giving", "give"]
+            },
+            {
+                q: "10. Don't forget to practice _____ (speak) English every day!",
+                correct: "speaking",
+                rule: "Verb 'practise/practice' requires Gerund (-ing)",
+                options: ["speaking", "to speak", "spoke"]
+            }
+        ];
+
+        function renderGerundData() {
+            const container = document.getElementById('gerund-questions-container');
+            if(!container) return;
+            container.innerHTML = gerundData.map((item) => `
+                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <p class="text-lg font-bold text-slate-100">${item.q}</p>
+                        <span class="text-xs font-semibold text-purple-400 italic bg-purple-950/60 px-2 py-0.5 rounded border border-purple-500/30 shrink-0">
+                            Rule Hint: ${item.rule}
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        ${item.options.map(opt => `
+                            <button onclick="checkGerundChoice(this, '${opt.replace(/'/g, "\\'")}', '${item.correct.replace(/'/g, "\\'")}')" 
+                                    class="btn-tv px-6 py-2.5 bg-slate-800 hover:bg-purple-600 text-white font-extrabold text-base rounded-xl border border-slate-600 transition">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function checkGerundChoice(btn, selected, correct) {
+            if(selected === correct) {
+                playSound('correct');
+                btn.className = "btn-tv px-6 py-2.5 bg-purple-600 text-white font-black text-base rounded-xl border-2 border-purple-300 shadow-lg";
+            } else {
+                playSound('wrong');
+                btn.className = "btn-tv px-6 py-2.5 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 opacity-60";
+            }
+        }
+
+        // --- RANDOM PICKER MODAL ---
+        function openPickerModal() {
+            playSound('click');
+            document.getElementById('picker-modal').classList.remove('hidden');
+        }
+
+        function closePickerModal() {
+            playSound('click');
+            document.getElementById('picker-modal').classList.add('hidden');
+        }
+
+        function spinPicker(type) {
+            playSound('click');
+            const display = document.getElementById('picker-display');
+            let counter = 0;
+            const interval = setInterval(() => {
+                if(type === 'student') {
+                    display.innerText = `Student #${Math.floor(Math.random() * 30) + 1}`;
+                } else {
+                    const teams = ['Team Red 🔴', 'Team Blue 🔵', 'Pair #1 👥', 'Pair #2 👥', 'Pair #3 👥'];
+                    display.innerText = teams[Math.floor(Math.random() * teams.length)];
+                }
+                counter++;
+                if(counter > 15) {
+                    clearInterval(interval);
+                    playSound('fanfare');
+                }
+            }, 80);
+        }
+
+        // --- APPLICATION INITIALIZATION ---
+        window.onload = function() {
+            // Randomize order of questions AND options on application startup
+            futureData = shuffleArray(futureData);
+            rulesData = shuffleArray(rulesData).map(r => ({
+                ...r,
+                options: shuffleArray(r.options)
+            }));
+            techQuiz = shuffleArray(techQuiz).map(t => ({
+                ...t,
+                options: shuffleArray(t.options)
+            }));
+            adjItems = shuffleArray(adjItems).map(a => ({
+                ...a,
+                scrambled: shuffleArray(a.scrambled)
+            }));
+            gerundData = shuffleArray(gerundData).map(g => ({
+                ...g,
+                options: shuffleArray(g.options)
+            }));
+
+            // Initial render calls
+            renderFutureEx();
+            renderRulesData();
+            renderTechData();
+            renderAdjGame();
+            renderGerundData();
+        };
+    </script>
+</body>
+</html>
