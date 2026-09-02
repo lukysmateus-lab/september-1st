@@ -1,457 +1,612 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mind Flow TV - Co-op Exam Challenge</title>
-
+    <title>Review Class 2 - Interactive Exam Study App</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;800;900&display=swap" rel="stylesheet">
-    <!-- Tone.js for Sound Effects -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tone.js for Audio -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top center, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+            background: #0f172a;
             color: #f8fafc;
-            user-select: none;
         }
-
-        .heading-font {
-            font-family: 'Fredoka', cursive, sans-serif;
+        .font-heading {
+            font-family: 'Fredoka', sans-serif;
         }
-
-        .tv-card {
+        .glass-card {
             background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(16px);
-            border: 3px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .btn-tv {
-            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: scale(1);
+        .btn-interact {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .btn-tv:hover, .btn-tv:focus {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.5);
+        .btn-interact:hover {
+            transform: translateY(-2px);
         }
-
-        .btn-tv:active {
-            transform: scale(0.97);
+        .btn-interact:active {
+            transform: translateY(1px);
         }
-
-        .word-chip {
-            animation: popIn 0.25s ease-out;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .pulse-glow {
-            animation: pulseGlow 2s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-            100% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.8); }
-        }
-
-        /* Custom scrollbar for TV */
+        /* Custom scrollbars */
         ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
             background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 6px;
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
     </style>
 </head>
-<body class="h-full min-h-screen flex flex-col justify-between p-4 md:p-8 text-lg">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- TOP TV HEADER -->
-    <header class="w-full max-w-7xl mx-auto mb-6">
-        <div class="tv-card rounded-3xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-8 border-pink-500">
+    <!-- HEADER & EXAM TRACKER -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             
-            <!-- App Title & Exam Info -->
-            <div class="flex items-center gap-4 text-center md:text-left">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-3xl text-white shadow-lg shrink-0">
-                    <i class="fa-solid fa-tv"></i>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-bold text-xs uppercase tracking-widest border border-pink-500/40">
-                        <i class="fa-solid fa-users text-amber-400"></i> TV Co-op Mode • Mind Flow Review
-                    </div>
-                    <h1 class="heading-font text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-cyan-300">
-                        EXAM REVIEW SHOWDOWN
+                    <h1 class="font-heading text-xl font-bold text-white flex items-center gap-2">
+                        Review Class 2 <span class="text-xs font-sans px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Study Hub</span>
                     </h1>
-                    <p class="text-sm font-semibold text-slate-300">
-                        <span class="text-amber-400 font-bold"><i class="fa-solid fa-calendar-day mr-1"></i>PROVA PERIÓDICA: 04/09</span> 
-                        • MF1 (5A, 5C) & MF2 (1B, 1C, 1D)
-                    </p>
+                    <p class="text-xs text-slate-400">Master Vocabulary, Grammar & Reading for your Assessment</p>
                 </div>
             </div>
 
-            <!-- TV Interactive Scoreboard (Red Team vs Blue Team) -->
-            <div class="flex items-center gap-3 w-full md:w-auto justify-center bg-slate-900/90 p-3 rounded-2xl border-2 border-slate-700">
-                <!-- Team Red -->
-                <div class="text-center px-4 py-1 bg-red-950/60 rounded-xl border border-red-500/40">
-                    <div class="text-xs font-bold text-red-400 uppercase">Team Red</div>
-                    <div id="score-red" class="heading-font text-3xl font-black text-red-300">0</div>
-                    <button onclick="addScore('red', 10)" class="mt-1 px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-xs font-bold transition">+10</button>
+            <!-- Stats & Controls -->
+            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                <!-- Progress Tracker -->
+                <div class="flex items-center gap-3 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
+                    <div class="text-xs">
+                        <span class="text-slate-400">Score:</span>
+                        <span id="global-score" class="font-bold text-amber-400">0 XP</span>
+                    </div>
                 </div>
 
-                <div class="text-xl font-black text-slate-500 px-1">VS</div>
-
-                <!-- Team Blue -->
-                <div class="text-center px-4 py-1 bg-blue-950/60 rounded-xl border border-blue-500/40">
-                    <div class="text-xs font-bold text-blue-400 uppercase">Team Blue</div>
-                    <div id="score-blue" class="heading-font text-3xl font-black text-blue-300">0</div>
-                    <button onclick="addScore('blue', 10)" class="mt-1 px-2 py-0.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">+10</button>
-                </div>
-
-                <!-- Randomizer / Tools Button -->
-                <div class="pl-2 border-l border-slate-700 flex flex-col gap-1">
-                    <button onclick="openPickerModal()" class="btn-tv px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-dice text-amber-300"></i> Who's Next?
-                    </button>
-                    <button onclick="toggleAudio()" id="audio-btn" class="btn-tv px-3 py-2 bg-slate-800 text-slate-300 hover:text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-volume-high text-cyan-400"></i> Sound ON
-                    </button>
-                </div>
+                <!-- Sound Toggle -->
+                <button onclick="toggleAudio()" id="audio-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-volume-high text-indigo-400"></i> Sound ON
+                </button>
             </div>
 
         </div>
     </header>
 
-    <!-- TV TOPIC NAVIGATION BAR -->
-    <nav class="w-full max-w-7xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <button onclick="switchTab('tab-future')" id="btn-tab-future" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg border-2 border-amber-300">
-            <i class="fa-solid fa-clock-rotate-left text-2xl"></i> 1. Future Cont.
-        </button>
-        <button onclick="switchTab('tab-rules')" id="btn-tab-rules" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
-            <i class="fa-solid fa-gavel text-2xl text-emerald-400"></i> 2. Rules (Make/Let)
-        </button>
-        <button onclick="switchTab('tab-tech')" id="btn-tab-tech" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
-            <i class="fa-solid fa-mobile-screen-button text-2xl text-cyan-400"></i> 3. Digital Life
-        </button>
-        <button onclick="switchTab('tab-adjectives')" id="btn-tab-adjectives" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
-            <i class="fa-solid fa-shirt text-2xl text-pink-400"></i> 4. Order Adjectives
-        </button>
-        <button onclick="switchTab('tab-gerund')" id="btn-tab-gerund" class="nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700">
-            <i class="fa-solid fa-graduation-cap text-2xl text-purple-400"></i> 5. Gerund / Infinitive
-        </button>
-    </nav>
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- MAIN GAME DISPLAY AREA -->
-    <main class="w-full max-w-7xl mx-auto flex-1 mb-6">
-
-        <!-- TAB 1: FUTURE CONTINUOUS (BUILDER GAME) -->
-        <section id="tab-future" class="tab-content space-y-6">
-            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-amber-500/40">
-                
-                <!-- Topic Intro Banner -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-amber-950/50 p-4 rounded-2xl border border-amber-500/30 mb-6">
-                    <div>
-                        <span class="px-3 py-1 bg-amber-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 2 - Lesson 1B</span>
-                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-amber-300 mt-1">
-                            <i class="fa-solid fa-bolt mr-2"></i>Future Continuous Sentence Construction
-                        </h2>
-                        <p class="text-base text-slate-200 mt-1">
-                            Rule: <span class="text-amber-300 font-extrabold bg-slate-900/80 px-2 py-0.5 rounded">Subject + WILL BE / WON'T BE + VERB(-ING)</span>
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="prevFutureEx()" class="btn-tv px-4 py-2 bg-slate-800 text-white rounded-xl font-bold border border-slate-600"><i class="fa-solid fa-arrow-left"></i> Prev</button>
-                        <span id="future-step-indicator" class="font-black text-amber-400 text-lg px-2">1 / 5</span>
-                        <button onclick="nextFutureEx()" class="btn-tv px-4 py-2 bg-amber-500 text-slate-950 rounded-xl font-extrabold"><i class="fa-solid fa-arrow-right"></i> Next</button>
-                    </div>
+        <!-- NAVIGATION SIDEBAR & TOPIC CHECKLIST -->
+        <aside class="lg:col-span-4 space-y-4">
+            
+            <!-- Overall Progress Card -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-heading text-lg font-bold text-white">Study Progress</h2>
+                    <span id="progress-percent" class="text-xs font-bold text-indigo-400 bg-indigo-950 px-2 py-0.5 rounded-full border border-indigo-800">0% Done</span>
                 </div>
-
-                <!-- TV Interactive Builder -->
-                <div id="future-game-card" class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
-                    <!-- Context Prompt -->
-                    <div class="text-center space-y-2">
-                        <div id="future-context" class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 inline-block px-3 py-1 rounded-full border border-amber-500/30">
-                            SPACE MISSION 2030
-                        </div>
-                        <div id="future-prompt" class="text-2xl md:text-3xl font-black text-white leading-relaxed">
-                            "At 8:00 PM tonight, the astronauts __________ towards Mars."
-                        </div>
-                    </div>
-
-                    <!-- Selected Target Box -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border-2 border-dashed border-amber-400/60 min-h-[80px] flex flex-wrap items-center justify-center gap-3" id="future-answer-zone">
-                        <span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>
-                    </div>
-
-                    <!-- Available Word Chips -->
-                    <div class="flex flex-wrap justify-center gap-3 pt-2" id="future-options-zone">
-                        <!-- Dynamic options generated by JS -->
-                    </div>
-
-                    <!-- Actions & Feedback -->
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
-                        <button onclick="resetFutureBuilder()" class="btn-tv px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-sm">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Clear Blocks
-                        </button>
-                        
-                        <div id="future-feedback" class="text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center"></div>
-
-                        <button onclick="checkFutureBuilder()" class="btn-tv px-8 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black rounded-2xl text-lg shadow-xl">
-                            <i class="fa-solid fa-circle-check mr-2"></i> Check Answer
-                        </button>
-                    </div>
+                <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
                 </div>
-
+                <p class="text-xs text-slate-400">Complete all 5 topics and practice tests to be 100% exam ready!</p>
             </div>
-        </section>
 
-        <!-- TAB 2: RULES (MAKE / LET / BE ALLOWED TO) -->
-        <section id="tab-rules" class="tab-content hidden space-y-6">
-            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-emerald-500/40">
+            <!-- Navigation Buttons -->
+            <nav class="glass-card rounded-2xl p-3 border border-slate-800 space-y-1">
                 
-                <!-- Topic Header -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-950/50 p-4 rounded-2xl border border-emerald-500/30 mb-6">
-                    <div>
-                        <span class="px-3 py-1 bg-emerald-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 1 - Lesson 5A & 5C</span>
-                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-emerald-300 mt-1">
-                            <i class="fa-solid fa-shield-halved mr-2"></i>Rules Transformer: Make, Let & Be Allowed To
-                        </h2>
-                        <p class="text-sm text-slate-200 mt-1">
-                            <span class="text-emerald-300 font-bold">• MAKE someone do</span> (Obligation) | 
-                            <span class="text-cyan-300 font-bold">• LET someone do</span> (Permission) | 
-                            <span class="text-pink-300 font-bold">• BE ALLOWED TO do</span> (Rule)
-                        </p>
-                    </div>
+                <button onclick="switchTab('overview')" id="nav-overview" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-list-check w-5 text-center"></i> Study Checklist & Guide</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+
+                <button onclick="switchTab('work-adj')" id="nav-work-adj" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-briefcase w-5 text-center text-amber-400"></i> 1. Work & Life Adjectives</span>
+                    <span id="badge-work-adj" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0/5</span>
+                </button>
+
+                <button onclick="switchTab('appearance')" id="nav-appearance" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-user-tag w-5 text-center text-pink-400"></i> 2. Physical Appearance</span>
+                    <span id="badge-appearance" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0/6</span>
+                </button>
+
+                <button onclick="switchTab('adj-order')" id="nav-adj-order" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-arrow-down-short-wide w-5 text-center text-cyan-400"></i> 3. Order of Adjectives</span>
+                    <span id="badge-adj-order" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0/5</span>
+                </button>
+
+                <button onclick="switchTab('verbs')" id="nav-verbs" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-gears w-5 text-center text-emerald-400"></i> 4. Gerund vs Infinitive</span>
+                    <span id="badge-verbs" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0/6</span>
+                </button>
+
+                <button onclick="switchTab('reading')" id="nav-reading" class="nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-book-open w-5 text-center text-purple-400"></i> 5. ACE Schools Reading</span>
+                    <span id="badge-reading" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0/8</span>
+                </button>
+
+                <div class="pt-2">
+                    <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-link w-full text-left p-3 rounded-xl font-bold text-sm flex items-center justify-between bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg hover:brightness-110 transition">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-file-pen w-5 text-center"></i> Full Exam Simulator</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
                 </div>
 
-                <!-- Interactive Challenge Cards Grid -->
-                <div class="grid grid-cols-1 gap-6" id="rules-cards-container">
-                    <!-- Populated by JS -->
-                </div>
+            </nav>
 
+            <!-- Quick Tips Box -->
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 bg-slate-900/60">
+                <h3 class="font-heading text-sm font-bold text-amber-300 flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i> Exam Tip
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed" id="dynamic-exam-tip">
+                    Click through each section, complete the interactive challenges, and finish with the Exam Simulator to guarantee a top grade!
+                </p>
             </div>
-        </section>
 
-        <!-- TAB 3: DIGITAL LIFE (VOCABULARY & ACTION SHOWDOWN) -->
-        <section id="tab-tech" class="tab-content hidden space-y-6">
-            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-cyan-500/40">
+        </aside>
+
+        <!-- MAIN INTERACTIVE DISPLAY AREA -->
+        <section class="lg:col-span-8 space-y-6">
+
+            <!-- TAB 0: OVERVIEW & STUDY CHECKLIST -->
+            <div id="tab-overview" class="tab-content space-y-6">
                 
-                <!-- Topic Header -->
-                <div class="bg-cyan-950/50 p-4 rounded-2xl border border-cyan-500/30 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <span class="px-3 py-1 bg-cyan-400 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Mind Flow 2 - Lesson 1C & 1D</span>
-                        <h2 class="heading-font text-2xl md:text-3xl font-extrabold text-cyan-300 mt-1">
-                            <i class="fa-solid fa-hashtag mr-2"></i>Digital Life Verbs & Expressions
-                        </h2>
-                        <p class="text-sm text-slate-200 mt-1">
-                            Target Verbs: <strong class="text-cyan-300">BROWSE</strong> • <strong class="text-cyan-300">POST</strong> • <strong class="text-cyan-300">SEND</strong> • <strong class="text-cyan-300">DOWNLOAD</strong> • <strong class="text-cyan-300">UPLOAD</strong>
-                        </p>
+                <div class="glass-card rounded-3xl p-6 md:p-8 border border-indigo-500/30 bg-gradient-to-br from-slate-900 via-indigo-950/30 to-slate-900">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-500/40">Review Class 2 Guide</span>
+                            <h2 class="font-heading text-2xl md:text-3xl font-extrabold text-white mt-2">
+                                What You Need To Study For The Exam
+                            </h2>
+                            <p class="text-sm text-slate-300 mt-2">
+                                Below is your complete exam topic breakdown. Review each concept card and practice using the interactive modules on the left.
+                            </p>
+                        </div>
+                        <div class="hidden sm:block text-5xl text-indigo-400 opacity-80">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Big TV Action Verb Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6" id="tech-verbs-grid">
-                    <!-- Populated by JS -->
-                </div>
-
-                <!-- Co-op Sentence Matcher -->
-                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
-                    <h3 class="heading-font text-xl font-black text-cyan-300 flex items-center gap-2">
-                        <i class="fa-solid fa-gamepad"></i> Complete the Tech Action Challenge
-                    </h3>
+                <!-- Topic Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <div id="tech-questions-container" class="space-y-4">
-                        <!-- Dynamic tech questions -->
+                    <!-- Topic 1 -->
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-heading text-base font-bold text-amber-400 flex items-center gap-2">
+                                <i class="fa-solid fa-briefcase"></i> 1. Work & Experience Adjectives
+                            </span>
+                            <button onclick="switchTab('work-adj')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">Practice <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <p class="text-xs text-slate-300">Key words to describe tasks and jobs:</p>
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            <span class="text-xs bg-slate-800 text-amber-300 px-2 py-1 rounded-lg border border-slate-700">demanding</span>
+                            <span class="text-xs bg-slate-800 text-amber-300 px-2 py-1 rounded-lg border border-slate-700">fun</span>
+                            <span class="text-xs bg-slate-800 text-amber-300 px-2 py-1 rounded-lg border border-slate-700">monotonous</span>
+                            <span class="text-xs bg-slate-800 text-amber-300 px-2 py-1 rounded-lg border border-slate-700">rewarding</span>
+                            <span class="text-xs bg-slate-800 text-amber-300 px-2 py-1 rounded-lg border border-slate-700">stressful</span>
+                        </div>
                     </div>
+
+                    <!-- Topic 2 -->
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-heading text-base font-bold text-pink-400 flex items-center gap-2">
+                                <i class="fa-solid fa-user-tag"></i> 2. Physical Appearance
+                            </span>
+                            <button onclick="switchTab('appearance')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">Practice <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <p class="text-xs text-slate-300">Facial features and age expressions:</p>
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">wrinkles</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">dimples</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">freckles</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">bald</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">beauty spot</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">flawless skin</span>
+                            <span class="text-xs bg-slate-800 text-pink-300 px-2 py-1 rounded-lg border border-slate-700">in her fifties / fortyish</span>
+                        </div>
+                    </div>
+
+                    <!-- Topic 3 -->
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-heading text-base font-bold text-cyan-400 flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-down-short-wide"></i> 3. Order of Adjectives
+                            </span>
+                            <button onclick="switchTab('adj-order')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">Practice <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <p class="text-xs text-slate-300">Rule Order Sequence:</p>
+                        <div class="p-2.5 bg-slate-900 rounded-xl text-xs font-mono text-cyan-300 border border-slate-800">
+                            Opinion ➔ Quality/Size ➔ Color/Pattern ➔ Material ➔ Type
+                        </div>
+                    </div>
+
+                    <!-- Topic 4 -->
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-heading text-base font-bold text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-gears"></i> 4. Gerunds & Infinitives
+                            </span>
+                            <button onclick="switchTab('verbs')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">Practice <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <div class="space-y-1 text-xs text-slate-300">
+                            <div><strong class="text-emerald-300">• Enjoy / Good at:</strong> + Gerund (<em>-ing</em>)</div>
+                            <div><strong class="text-indigo-300">• Decided / Want:</strong> + Infinitive (<em>to + verb</em>)</div>
+                            <div><strong class="text-pink-300">• Don't let me:</strong> + Bare Infinitive (<em>base verb</em>)</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Start Action -->
+                <div class="text-center pt-2">
+                    <button onclick="switchTab('work-adj')" class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-indigo-600/30 text-base btn-interact inline-flex items-center gap-3">
+                        <span>Start Interactive Practice</span>
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                    </button>
                 </div>
 
             </div>
-        </section>
 
-        <!-- TAB 4: ORDER OF ADJECTIVES (BUILDER & VISUALIZER) -->
-        <section id="tab-adjectives" class="tab-content hidden space-y-6">
-            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-pink-500/40">
+            <!-- TAB 1: WORK & EXPERIENCE ADJECTIVES -->
+            <div id="tab-work-adj" class="tab-content hidden space-y-6">
                 
-                <!-- Rule Formula Display Bar -->
-                <div class="bg-gradient-to-r from-pink-950/80 via-purple-950/80 to-slate-900 p-5 rounded-2xl border-2 border-pink-500/40 mb-6 space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="px-3 py-1 bg-pink-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider">Grammar Rule Formula</span>
-                        <span class="text-xs text-slate-300 font-bold">OPINIONS FIRST • NOUN LAST</span>
-                    </div>
-                    
-                    <!-- Adjective Sequence Banner -->
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-black">
-                        <div class="p-2 bg-pink-500/20 border border-pink-400 rounded-xl text-pink-300">
-                            1. OPINION
-                            <span class="block text-[10px] font-normal text-slate-300">cool, beautiful, awful</span>
+                <div class="glass-card rounded-3xl p-6 border border-amber-500/30 bg-slate-900/90 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Vocabulary Review #1</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">Work & Experience Adjectives</h2>
                         </div>
-                        <div class="p-2 bg-purple-500/20 border border-purple-400 rounded-xl text-purple-300">
-                            2. COLOR
-                            <span class="block text-[10px] font-normal text-slate-300">red, black, navy blue</span>
-                        </div>
-                        <div class="p-2 bg-indigo-500/20 border border-indigo-400 rounded-xl text-indigo-300">
-                            3. PATTERN
-                            <span class="block text-[10px] font-normal text-slate-300">striped, spotted, plain</span>
-                        </div>
-                        <div class="p-2 bg-cyan-500/20 border border-cyan-400 rounded-xl text-cyan-300">
-                            4. MATERIAL
-                            <span class="block text-[10px] font-normal text-slate-300">leather, cotton, silk</span>
-                        </div>
-                        <div class="p-2 bg-emerald-500/20 border border-emerald-400 rounded-xl text-emerald-300">
-                            5. STYLE / TYPE
-                            <span class="block text-[10px] font-normal text-slate-300">casual, retro, sports</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Interactive Adjective Cards Container (All 6 Items on the same page) -->
-                <div id="adj-cards-container" class="space-y-6">
-                    <!-- Dynamic multi-card list generated by JS -->
-                </div>
-
-            </div>
-        </section>
-
-        <!-- TAB 5: GERUND VS INFINITIVE (VERB PATTERNS & PREPOSITIONS) -->
-        <section id="tab-gerund" class="tab-content hidden space-y-6">
-            <div class="tv-card rounded-3xl p-6 md:p-8 border-2 border-purple-500/40">
-                
-                <!-- Topic Intro Banner -->
-                <div class="bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-slate-900 p-5 rounded-2xl border-2 border-purple-500/40 mb-6 space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="px-3 py-1 bg-purple-500 text-white font-black rounded-lg text-xs uppercase tracking-wider">Verb Patterns & Rules</span>
-                        <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>PROVA PERIÓDICA TOPIC</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                        <div class="p-3 bg-purple-900/40 border border-purple-500/50 rounded-xl">
-                            <strong class="text-purple-300 block text-base font-extrabold mb-1">1. GERUND (-ing)</strong>
-                            <p class="text-xs text-slate-300">After verbs: <em>enjoy, avoid, finish, practise, dislike, mind, keep, suggest, consider</em>.</p>
-                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: I enjoy playing games.</span>
-                        </div>
-                        <div class="p-3 bg-indigo-900/40 border border-indigo-500/50 rounded-xl">
-                            <strong class="text-indigo-300 block text-base font-extrabold mb-1">2. INFINITIVE (to + verb)</strong>
-                            <p class="text-xs text-slate-300">After verbs: <em>want, decide, hope, promise, agree, refuse, plan, learn, offer</em>.</p>
-                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: She decided to study abroad.</span>
-                        </div>
-                        <div class="p-3 bg-cyan-900/40 border border-cyan-500/50 rounded-xl">
-                            <strong class="text-cyan-300 block text-base font-extrabold mb-1">3. AFTER PREPOSITIONS</strong>
-                            <p class="text-xs text-slate-300">After prepositions (<em>about, at, in, of, for</em>) always use <strong>GERUND (-ing)</strong>!</p>
-                            <span class="text-[11px] font-bold text-amber-300 block mt-1">Ex: Good at speaking, interested in buying.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Interactive Question Cards Grid -->
-                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-6">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                        <h3 class="heading-font text-2xl font-black text-purple-300 flex items-center gap-2">
-                            <i class="fa-solid fa-puzzle-piece"></i> Complete with Gerund (-ing) or Infinitive (to...)
-                        </h3>
-                        <span class="text-xs font-extrabold text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-                            Questions & Options randomized on startup!
+                        <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-bold border border-amber-500/30">
+                            Fill in the blanks
                         </span>
                     </div>
 
-                    <div id="gerund-questions-container" class="space-y-4">
-                        <!-- Populated by JS -->
+                    <!-- Word Bank Display -->
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Available Word Bank:</span>
+                        <div class="flex flex-wrap gap-2" id="work-word-bank">
+                            <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-sm">demanding</span>
+                            <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-sm">fun</span>
+                            <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-sm">monotonous</span>
+                            <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-sm">rewarding</span>
+                            <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-xl font-extrabold text-sm">stressful</span>
+                        </div>
                     </div>
+
+                    <!-- Questions List -->
+                    <div class="space-y-4" id="work-questions-container">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="resetWorkAdj()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+                            Reset Answers
+                        </button>
+                        <button onclick="checkWorkAdj()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-amber-500/20 btn-interact">
+                            Check Section 1 Answers
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
+
+            <!-- TAB 2: PHYSICAL APPEARANCE & AGE -->
+            <div id="tab-appearance" class="tab-content hidden space-y-6">
+                
+                <div class="glass-card rounded-3xl p-6 border border-pink-500/30 bg-slate-900/90 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-pink-400 uppercase tracking-wider">Vocabulary Review #2</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">Physical Features & Age Expressions</h2>
+                        </div>
+                        <span class="text-xs bg-pink-500/20 text-pink-300 px-3 py-1 rounded-full font-bold border border-pink-500/30">
+                            Picture Matcher
+                        </span>
+                    </div>
+
+                    <p class="text-sm text-slate-300">Identify the correct vocabulary term for each image and concept from the slides:</p>
+
+                    <!-- Interactive Image Match Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="appearance-grid">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Age Expressions Quiz Box -->
+                    <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="font-heading text-base font-bold text-pink-300 flex items-center gap-2">
+                            <i class="fa-solid fa-cake-candles"></i> Age Expression Practice
+                        </h3>
+                        <p class="text-xs text-slate-300">Select the correct expression for age descriptions:</p>
+                        
+                        <div class="space-y-3" id="age-questions-container">
+                            <!-- JS dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="resetAppearance()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+                            Reset Choices
+                        </button>
+                        <button onclick="checkAppearance()" class="px-6 py-2.5 bg-pink-500 hover:bg-pink-400 text-white font-black rounded-xl text-sm shadow-lg shadow-pink-500/20 btn-interact">
+                            Check Section 2 Answers
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 3: ORDER OF ADJECTIVES -->
+            <div id="tab-adj-order" class="tab-content hidden space-y-6">
+                
+                <div class="glass-card rounded-3xl p-6 border border-cyan-500/30 bg-slate-900/90 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Grammar Challenge #1</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">Order of Adjectives</h2>
+                        </div>
+                        <span class="text-xs bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full font-bold border border-cyan-500/30">
+                            Sentence Reorder
+                        </span>
+                    </div>
+
+                    <!-- Rule Box -->
+                    <div class="p-4 bg-cyan-950/40 border border-cyan-500/30 rounded-2xl space-y-2 text-xs">
+                        <div class="font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> Adjective Order Rule Reminder:
+                        </div>
+                        <p class="text-slate-200">
+                            <strong>OPINION</strong> (beautiful, stylish, ugly, fantastic, lovely) ➔ 
+                            <strong>QUALITY/TEMP/COLOR</strong> (warm, grey, white) ➔ 
+                            <strong>PATTERN</strong> (striped, polka dot, high-top, floral) ➔ 
+                            <strong>MATERIAL/LENGTH</strong> (woolen, cotton, mini)
+                        </p>
+                    </div>
+
+                    <!-- Interactive Adjective Builders -->
+                    <div class="space-y-6" id="adj-order-container">
+                        <!-- Dynamic items -->
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="resetAdjOrder()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+                            Reset Sequences
+                        </button>
+                        <button onclick="checkAdjOrder()" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-cyan-500/20 btn-interact">
+                            Check Section 3 Answers
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 4: GERUND VS INFINITIVE -->
+            <div id="tab-verbs" class="tab-content hidden space-y-6">
+                
+                <div class="glass-card rounded-3xl p-6 border border-emerald-500/30 bg-slate-900/90 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Grammar Challenge #2</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">Gerunds & Infinitives Practice</h2>
+                        </div>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full font-bold border border-emerald-500/30">
+                            Verb Patterns
+                        </span>
+                    </div>
+
+                    <p class="text-sm text-slate-300">Complete each sentence using <strong>Gerund (-ing)</strong>, <strong>Infinitive with 'to'</strong>, or <strong>Infinitive without 'to' (base form)</strong>:</p>
+
+                    <!-- Verb Sentences List -->
+                    <div class="space-y-4" id="verb-questions-container">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="resetVerbs()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+                            Reset Options
+                        </button>
+                        <button onclick="checkVerbs()" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-emerald-500/20 btn-interact">
+                            Check Section 4 Answers
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 5: READING COMPREHENSION (ACE SCHOOLS) -->
+            <div id="tab-reading" class="tab-content hidden space-y-6">
+                
+                <div class="glass-card rounded-3xl p-6 border border-purple-500/30 bg-slate-900/90 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Reading Comprehension</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">ACE Schools Language Courses</h2>
+                        </div>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full font-bold border border-purple-500/30">
+                            Text & True/False
+                        </span>
+                    </div>
+
+                    <!-- ACE Webpage Simulation Text Box -->
+                    <div class="bg-slate-950 rounded-2xl border-2 border-slate-800 overflow-hidden shadow-inner">
+                        <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700 text-xs text-slate-400">
+                            <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                            <span class="ml-2 font-mono text-slate-300">www.acelanguages.com/summerschools.faqs</span>
+                        </div>
+                        <div class="p-5 space-y-3 text-xs md:text-sm text-slate-300 leading-relaxed">
+                            <div class="font-heading text-lg font-bold text-amber-400">ACE Intensive language courses for children and teenagers (8-18)</div>
+                            <div><strong class="text-white">Where?</strong> We run residential courses abroad and in the UK.</div>
+                            <div><strong class="text-white">How many students are there?</strong> A maximum of 12 students per class.</div>
+                            <div><strong class="text-white">How many hours of lessons are there?</strong> 20 hours of lessons a week.</div>
+                            <div><strong class="text-white">When are the courses?</strong> All courses run during the summer and at Easter.</div>
+                            <div><strong class="text-white">How long are the courses?</strong> From 1 week to 2 months.</div>
+                            <div><strong class="text-white">Who are the teachers?</strong> All teachers are qualified teachers of languages.</div>
+                            <div><strong class="text-white">Where do the students stay?</strong> In student residences with qualified teachers and activity monitors who are present 24 hours a day.</div>
+                            <div><strong class="text-white">What do the students do after class?</strong> Each language programme includes organised sports, activities and excursions after class and at weekends.</div>
+                            <div class="pt-2 text-slate-400 italic">ACE has schools in: London | Oxford | Manchester | Brighton | and abroad</div>
+                        </div>
+                    </div>
+
+                    <!-- True or False Quiz -->
+                    <div class="space-y-4">
+                        <h3 class="font-heading text-lg font-bold text-purple-300">Check your understanding: True or False</h3>
+                        <div class="space-y-3" id="reading-questions-container">
+                            <!-- Dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="resetReading()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+                            Reset T/F
+                        </button>
+                        <button onclick="checkReading()" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-sm shadow-lg shadow-purple-600/20 btn-interact">
+                            Check Section 5 Answers
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 6: FULL EXAM SIMULATOR -->
+            <div id="tab-simulator" class="tab-content hidden space-y-6">
+                
+                <div class="glass-card rounded-3xl p-6 border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <div>
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Final Assessment</span>
+                            <h2 class="font-heading text-2xl font-extrabold text-white">Full Exam Simulator</h2>
+                        </div>
+                        <div id="sim-timer" class="text-lg font-mono font-bold text-amber-300 bg-amber-950/80 px-4 py-1 rounded-xl border border-amber-500/40">
+                            Timer: 00:00
+                        </div>
+                    </div>
+
+                    <!-- Intro Box / Quiz Display -->
+                    <div id="sim-start-box" class="text-center py-8 space-y-4">
+                        <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-amber-500/40">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold text-white">Ready for the Mock Exam?</h3>
+                        <p class="text-sm text-slate-300 max-w-md mx-auto">
+                            This exam simulator combines questions from all 5 topics in random order to test your complete readiness!
+                        </p>
+                        <button onclick="startExamSimulator()" class="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black rounded-2xl text-lg shadow-xl btn-interact">
+                            Start Mock Exam Now
+                        </button>
+                    </div>
+
+                    <div id="sim-quiz-box" class="hidden space-y-6">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400 border-b border-slate-800 pb-2">
+                            <span id="sim-q-indicator">Question 1 of 10</span>
+                            <span id="sim-score-counter">Score: 0</span>
+                        </div>
+
+                        <div id="sim-question-card" class="p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
+                            <!-- Dynamic Question -->
+                        </div>
+
+                        <div id="sim-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Dynamic Options -->
+                        </div>
+
+                        <div id="sim-feedback" class="hidden p-4 rounded-xl text-center font-bold text-sm"></div>
+
+                        <div class="flex justify-end pt-2">
+                            <button id="sim-next-btn" onclick="nextSimQuestion()" class="hidden px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold rounded-xl text-sm shadow btn-interact">
+                                Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Box -->
+                    <div id="sim-results-box" class="hidden text-center py-8 space-y-4">
+                        <div id="sim-trophy-icon" class="text-6xl text-amber-400">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="font-heading text-3xl font-black text-white" id="sim-final-score-title">Exam Complete!</h3>
+                        <p class="text-base text-slate-300" id="sim-final-msg"></p>
+                        <button onclick="startExamSimulator()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm btn-interact">
+                            Retake Mock Exam
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
         </section>
 
     </main>
 
-    <!-- RANDOM STUDENT / PAIR PICKER MODAL -->
-    <div id="picker-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
-        <div class="tv-card max-w-xl w-full rounded-3xl p-6 border-4 border-purple-500 text-center space-y-6 relative shadow-2xl">
-            <button onclick="closePickerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="w-20 h-20 bg-purple-500/20 text-purple-400 rounded-3xl flex items-center justify-center mx-auto text-4xl border-2 border-purple-400">
-                <i class="fa-solid fa-dice"></i>
-            </div>
-
-            <div>
-                <h3 class="heading-font text-3xl font-extrabold text-white">WHO ANSWERS NEXT?</h3>
-                <p class="text-sm text-slate-300 mt-1">Spin to choose a student number or team for the current question on TV!</p>
-            </div>
-
-            <!-- Display Box -->
-            <div id="picker-display" class="bg-slate-900 border-2 border-amber-400 rounded-2xl p-6 text-3xl font-black text-amber-300 min-h-[100px] flex items-center justify-center pulse-glow">
-                READY TO SPIN!
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="spinPicker('student')" class="flex-1 py-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-sm transition btn-tv">
-                    <i class="fa-solid fa-user mr-1"></i> Pick Student #
-                </button>
-                <button onclick="spinPicker('team')" class="flex-1 py-3 bg-pink-600 hover:bg-pink-500 text-white font-black rounded-xl text-sm transition btn-tv">
-                    <i class="fa-solid fa-users mr-1"></i> Pick Team
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- FOOTER -->
-    <footer class="w-full max-w-7xl mx-auto text-center text-slate-400 text-xs py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
-        <div><i class="fa-solid fa-chalkboard-user mr-1"></i> Designed for TV Projection & Classroom Co-op Practice</div>
-        <div class="font-bold text-amber-400">PROVA PERIÓDICA • 04/09</div>
+    <footer class="border-t border-slate-800 bg-slate-900/60 py-4 px-6 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div>Review Class 2 • Interactive Study Tool</div>
+            <div class="font-semibold text-indigo-400"><i class="fa-solid fa-graduation-cap mr-1"></i> Exam Preparation Ready</div>
+        </div>
     </footer>
 
     <script>
-        // Utility function to randomize arrays (questions & options)
-        function shuffleArray(array) {
-            let arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
+        // --- SOUND EFFECTS (TONE.JS) ---
         let audioEnabled = true;
-
-        // Tone.js Synth setup for game audio effects
         const synth = new Tone.Synth().toDestination();
 
-        function playSound(type) {
+        function playAudio(type) {
             if(!audioEnabled) return;
             try {
                 if (Tone.context.state !== 'running') {
                     Tone.start();
                 }
-                if(type === 'correct') {
-                    synth.triggerAttackRelease("C5", "8n");
-                    setTimeout(() => synth.triggerAttackRelease("G5", "8n"), 100);
-                } else if(type === 'wrong') {
-                    synth.triggerAttackRelease("G3", "8n");
-                    setTimeout(() => synth.triggerAttackRelease("C3", "8n"), 100);
-                } else if(type === 'click') {
+                if (type === 'correct') {
                     synth.triggerAttackRelease("E5", "16n");
-                } else if(type === 'fanfare') {
+                    setTimeout(() => synth.triggerAttackRelease("A5", "8n"), 80);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease("F3", "8n");
+                } else if (type === 'click') {
+                    synth.triggerAttackRelease("C5", "32n");
+                } else if (type === 'win') {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                     synth.triggerAttackRelease("C5", "8n");
-                    setTimeout(() => synth.triggerAttackRelease("E5", "8n"), 120);
-                    setTimeout(() => synth.triggerAttackRelease("G5", "4n"), 240);
+                    setTimeout(() => synth.triggerAttackRelease("E5", "8n"), 100);
+                    setTimeout(() => synth.triggerAttackRelease("G5", "8n"), 200);
+                    setTimeout(() => synth.triggerAttackRelease("C6", "4n"), 300);
                 }
-            } catch(e) {
-                console.log("Audio play error", e);
+            } catch (e) {
+                console.log("Audio play exception", e);
             }
         }
 
@@ -459,667 +614,698 @@
             audioEnabled = !audioEnabled;
             const btn = document.getElementById('audio-btn');
             if(audioEnabled) {
-                btn.innerHTML = `<i class="fa-solid fa-volume-high text-cyan-400"></i> Sound ON`;
-                playSound('click');
+                btn.innerHTML = `<i class="fa-solid fa-volume-high text-indigo-400"></i> Sound ON`;
+                playAudio('click');
             } else {
                 btn.innerHTML = `<i class="fa-solid fa-volume-xmark text-slate-500"></i> Sound OFF`;
             }
         }
 
-        // --- SCOREBOARD ---
-        let scoreRed = 0;
-        let scoreBlue = 0;
+        // --- GLOBAL SCORE & PROGRESS TRACKING ---
+        let globalXP = 0;
+        let completedSections = {
+            workAdj: false,
+            appearance: false,
+            adjOrder: false,
+            verbs: false,
+            reading: false
+        };
 
-        function addScore(team, pts) {
-            playSound('fanfare');
-            if(team === 'red') {
-                scoreRed += pts;
-                document.getElementById('score-red').innerText = scoreRed;
-            } else {
-                scoreBlue += pts;
-                document.getElementById('score-blue').innerText = scoreBlue;
-            }
+        function addXP(pts) {
+            globalXP += pts;
+            document.getElementById('global-score').innerText = `${globalXP} XP`;
+        }
+
+        function updateGlobalProgress() {
+            const count = Object.values(completedSections).filter(Boolean).length;
+            const pct = Math.round((count / 5) * 100);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-percent').innerText = `${pct}% Done`;
         }
 
         // --- TAB NAVIGATION ---
         function switchTab(tabId) {
-            playSound('click');
+            playAudio('click');
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-slate-800 text-slate-300 hover:text-white border-2 border-slate-700";
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.className = "nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between text-slate-300 hover:bg-slate-800/80 hover:text-white transition";
             });
 
-            document.getElementById(tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('btn-' + tabId);
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
             if(activeBtn) {
-                activeBtn.className = "nav-btn btn-tv py-4 px-4 rounded-2xl font-black text-lg sm:text-xl transition flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg border-2 border-amber-300";
+                if(tabId === 'simulator') {
+                    activeBtn.className = "nav-link w-full text-left p-3 rounded-xl font-bold text-sm flex items-center justify-between bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-lg brightness-110";
+                } else {
+                    activeBtn.className = "nav-link w-full text-left p-3 rounded-xl font-semibold text-sm flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                }
             }
+
+            // Update Exam tips dynamically
+            const tips = {
+                'overview': "Review the checklist topics first before taking the full simulator test!",
+                'work-adj': "Remember: 'Demanding' requires effort, 'Rewarding' gives emotional satisfaction, 'Monotonous' is repetitive.",
+                'appearance': "Learn to differentiate between dimples (cheeks) and freckles (dots on skin).",
+                'adj-order': "Opinion adjectives ALWAYS come first before qualities, colors, patterns, or materials!",
+                'verbs': "Check for prepositions like 'at' or 'in' (always take gerund -ing) and verbs like 'decided' (takes 'to').",
+                'reading': "Read carefully: ACE Schools are for ages 8-18 and run in the UK AND abroad!",
+                'simulator': "Complete all questions to measure your overall exam score!"
+            };
+            document.getElementById('dynamic-exam-tip').innerText = tips[tabId] || tips['overview'];
         }
 
-        // --- TAB 1: FUTURE CONTINUOUS DATA & LOGIC ---
-        let futureData = [
+        // --- TAB 1: WORK ADJECTIVES DATA & LOGIC ---
+        const workData = [
             {
-                context: "SPACE MISSION 2030",
-                prompt: "At 8:00 PM tonight, the astronauts __________ towards Mars.",
-                correct: ["will", "be", "flying"],
-                options: ["will", "be", "flying", "are", "flown", "fly"],
-                fullText: "will be flying"
+                id: 'w1',
+                sentence: "a. Working as a teacher and helping students achieve their goals can be extremely ______________________.",
+                correct: "rewarding",
+                options: ["rewarding", "fun", "monotonous", "stressful", "demanding"]
             },
             {
-                context: "FUTURE SCHOOL",
-                prompt: "Tomorrow at noon, students __________ digital exams on tablets.",
-                correct: ["will", "be", "taking"],
-                options: ["will", "be", "taking", "won't", "took", "takes"],
-                fullText: "will be taking"
+                id: 'w2',
+                sentence: "b. Spending the weekend at an amusement park, riding roller coasters and playing exciting games sounds really ______________________!",
+                correct: "fun",
+                options: ["rewarding", "fun", "monotonous", "stressful", "demanding"]
             },
             {
-                context: "WEEKEND PLAN",
-                prompt: "At this exact time tomorrow, I __________ video games with my team.",
-                correct: ["will", "be", "playing"],
-                options: ["will", "be", "playing", "am", "played", "play"],
-                fullText: "will be playing"
+                id: 'w3',
+                sentence: "c. Checking the same documents and entering the same information into a computer every day can become very ______________________.",
+                correct: "monotonous",
+                options: ["rewarding", "fun", "monotonous", "stressful", "demanding"]
             },
             {
-                context: "NEGATIVE FUTURE CONTINUOUS",
-                prompt: "Don't call her at 11 PM. She __________ in her bedroom.",
-                correct: ["won't", "be", "studying"],
-                options: ["won't", "be", "studying", "will", "study", "is"],
-                fullText: "won't be studying"
+                id: 'w4',
+                sentence: "d. Preparing for an important presentation with very little time can be extremely ______________________.",
+                correct: "stressful",
+                options: ["rewarding", "fun", "monotonous", "stressful", "demanding"]
             },
             {
-                context: "LIVE CONCERT",
-                prompt: "At 9 PM on Saturday, the band __________ their new song live.",
-                correct: ["will", "be", "performing"],
-                options: ["will", "be", "performing", "perform", "are", "performed"],
-                fullText: "will be performing"
+                id: 'w5',
+                sentence: "e. Training for a marathon requires a lot of physical effort, discipline, and time, so it is a very ______________________ activity.",
+                correct: "demanding",
+                options: ["rewarding", "fun", "monotonous", "stressful", "demanding"]
             }
         ];
 
-        let currentFutureIdx = 0;
-        let selectedFutureWords = [];
-
-        function renderFutureEx() {
-            const ex = futureData[currentFutureIdx];
-            document.getElementById('future-step-indicator').innerText = `${currentFutureIdx + 1} / ${futureData.length}`;
-            document.getElementById('future-context').innerText = ex.context;
-            document.getElementById('future-prompt').innerText = `"${ex.prompt}"`;
-            
-            selectedFutureWords = [];
-            const answerZone = document.getElementById('future-answer-zone');
-            answerZone.innerHTML = `<span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>`;
-
-            const optionsZone = document.getElementById('future-options-zone');
-            optionsZone.innerHTML = ex.options.map((w, idx) => `
-                <button id="future-opt-${idx}" onclick="addFutureWord('${w}', ${idx})" 
-                        class="word-chip btn-tv px-5 py-3 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border-2 border-amber-400/40 text-amber-300 font-black text-xl rounded-2xl shadow">
-                    ${w}
-                </button>
-            `).join('');
-
-            const feedback = document.getElementById('future-feedback');
-            feedback.className = "text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center";
-            feedback.innerText = "";
-        }
-
-        function addFutureWord(word, optIdx) {
-            playSound('click');
-            const placeholder = document.getElementById('future-placeholder');
-            if(placeholder) placeholder.remove();
-
-            const btnOpt = document.getElementById(`future-opt-${optIdx}`);
-            if(btnOpt) btnOpt.classList.add('opacity-30', 'pointer-events-none');
-
-            selectedFutureWords.push({ word, optIdx });
-            updateFutureAnswerZone();
-        }
-
-        function removeFutureWord(index) {
-            playSound('click');
-            const removed = selectedFutureWords.splice(index, 1)[0];
-            if(removed) {
-                const btnOpt = document.getElementById(`future-opt-${removed.optIdx}`);
-                if(btnOpt) btnOpt.classList.remove('opacity-30', 'pointer-events-none');
-            }
-            updateFutureAnswerZone();
-        }
-
-        function updateFutureAnswerZone() {
-            const answerZone = document.getElementById('future-answer-zone');
-            if(selectedFutureWords.length === 0) {
-                answerZone.innerHTML = `<span class="text-slate-500 italic text-base" id="future-placeholder">Click/Tap the blocks below to assemble the sentence!</span>`;
-                return;
-            }
-
-            answerZone.innerHTML = selectedFutureWords.map((item, idx) => `
-                <button onclick="removeFutureWord(${idx})" class="word-chip px-5 py-3 bg-amber-500 text-slate-950 font-black text-xl rounded-2xl border-2 border-amber-300 shadow flex items-center gap-2">
-                    <span>${item.word}</span>
-                    <i class="fa-solid fa-xmark text-sm opacity-70"></i>
-                </button>
-            `).join('');
-        }
-
-        function resetFutureBuilder() {
-            playSound('click');
-            selectedFutureWords.forEach(item => {
-                const btnOpt = document.getElementById(`future-opt-${item.optIdx}`);
-                if(btnOpt) btnOpt.classList.remove('opacity-30', 'pointer-events-none');
-            });
-            selectedFutureWords = [];
-            updateFutureAnswerZone();
-            
-            const feedback = document.getElementById('future-feedback');
-            feedback.className = "text-xl font-extrabold hidden px-4 py-2 rounded-xl text-center";
-        }
-
-        function checkFutureBuilder() {
-            const ex = futureData[currentFutureIdx];
-            const userSeq = selectedFutureWords.map(s => s.word);
-            const feedback = document.getElementById('future-feedback');
-            feedback.classList.remove('hidden', 'bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500', 'bg-rose-500/20', 'text-rose-300', 'border-rose-500');
-
-            if (JSON.stringify(userSeq) === JSON.stringify(ex.correct)) {
-                playSound('correct');
-                feedback.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500');
-                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> PERFECT! "${ex.fullText}"`;
-            } else {
-                playSound('wrong');
-                feedback.classList.add('bg-rose-500/20', 'text-rose-300', 'border', 'border-rose-500');
-                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-2"></i> NOT QUITE. Expected: "${ex.correct.join(' ')}"`;
-            }
-        }
-
-        function nextFutureEx() {
-            if(currentFutureIdx < futureData.length - 1) {
-                currentFutureIdx++;
-                renderFutureEx();
-            }
-        }
-
-        function prevFutureEx() {
-            if(currentFutureIdx > 0) {
-                currentFutureIdx--;
-                renderFutureEx();
-            }
-        }
-
-        // --- TAB 2: RULES DATA & LOGIC ---
-        let rulesData = [
-            {
-                id: 'r1',
-                type: 'MAKE (Obligation)',
-                badge: 'MAKE',
-                badgeColor: 'bg-emerald-500 text-slate-950',
-                scenario: 'The teacher forces us to turn off our mobile phones during the test.',
-                question: 'Rewrite using "MAKE":',
-                options: [
-                    { text: 'The teacher makes us turn off our phones.', correct: true },
-                    { text: 'The teacher makes us to turn off our phones.', correct: false },
-                    { text: 'The teacher is made us turn off our phones.', correct: false }
-                ]
-            },
-            {
-                id: 'r2',
-                type: 'LET (Permission)',
-                badge: 'LET',
-                badgeColor: 'bg-cyan-400 text-slate-950',
-                scenario: 'My parents give me permission to play video games on weekends.',
-                question: 'Rewrite using "LET":',
-                options: [
-                    { text: 'My parents let me to play video games.', correct: false },
-                    { text: 'My parents let me play video games.', correct: true },
-                    { text: 'My parents lets me playing video games.', correct: false }
-                ]
-            },
-            {
-                id: 'r3',
-                type: 'BE ALLOWED TO (Rule)',
-                badge: 'BE ALLOWED TO',
-                badgeColor: 'bg-pink-500 text-white',
-                scenario: 'Students do NOT have permission to wear caps inside the classroom.',
-                question: 'Rewrite using "NOT ALLOWED TO":',
-                options: [
-                    { text: 'Students aren\'t allowed to wear caps in class.', correct: true },
-                    { text: 'Students don\'t allowed to wear caps in class.', correct: false },
-                    { text: 'Students aren\'t allow wearing caps in class.', correct: false }
-                ]
-            }
-        ];
-
-        function renderRulesData() {
-            const container = document.getElementById('rules-cards-container');
-            if(!container) return;
-            container.innerHTML = rulesData.map(r => `
-                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="px-3 py-1 font-black rounded-lg text-xs uppercase ${r.badgeColor}">${r.badge}</span>
-                        <span class="text-xs text-slate-400 font-bold">${r.type}</span>
-                    </div>
-                    <div class="text-xl font-bold text-slate-200">
-                        <i class="fa-solid fa-quote-left text-emerald-400 mr-2"></i>${r.scenario}
-                    </div>
-                    <div class="text-base font-extrabold text-emerald-300">${r.question}</div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        ${r.options.map((opt) => `
-                            <button onclick="checkRuleChoice(this, ${opt.correct})" class="btn-tv p-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-base rounded-xl border-2 border-slate-600 text-left transition">
-                                ${opt.text}
+        function renderWorkAdj() {
+            const container = document.getElementById('work-questions-container');
+            container.innerHTML = workData.map((q, idx) => `
+                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">${q.sentence}</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${q.options.map(opt => `
+                            <button onclick="selectWorkOpt(this, '${q.id}', '${opt}')" class="work-opt-${q.id} px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
+                                ${opt}
                             </button>
                         `).join('')}
                     </div>
+                    <div id="feedback-${q.id}" class="text-xs font-bold hidden"></div>
                 </div>
             `).join('');
         }
 
-        function checkRuleChoice(btn, isCorrect) {
-            if(isCorrect) {
-                playSound('correct');
-                btn.className = "btn-tv p-4 bg-emerald-600 text-white font-black text-base rounded-xl border-2 border-emerald-300 text-left shadow-lg";
+        let userWorkAns = {};
+
+        function selectWorkOpt(btn, qId, val) {
+            playAudio('click');
+            document.querySelectorAll(`.work-opt-${qId}`).forEach(b => {
+                b.className = "work-opt-" + qId + " px-4 py-2 bg-slate-900 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition";
+            });
+            btn.className = "work-opt-" + qId + " px-4 py-2 bg-amber-500 text-slate-950 font-black text-xs rounded-xl border border-amber-400 shadow-lg transition";
+            userWorkAns[qId] = val;
+        }
+
+        function resetWorkAdj() {
+            playAudio('click');
+            userWorkAns = {};
+            renderWorkAdj();
+        }
+
+        function checkWorkAdj() {
+            let correctCount = 0;
+            workData.forEach(q => {
+                const fb = document.getElementById(`feedback-${q.id}`);
+                fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                if(userWorkAns[q.id] === q.correct) {
+                    correctCount++;
+                    fb.classList.add('text-emerald-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct! (${q.correct})`;
+                } else {
+                    fb.classList.add('text-rose-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect. Answer: ${q.correct}`;
+                }
+            });
+
+            document.getElementById('badge-work-adj').innerText = `${correctCount}/5`;
+            if(correctCount === 5) {
+                playAudio('win');
+                if(!completedSections.workAdj) {
+                    completedSections.workAdj = true;
+                    addXP(100);
+                    updateGlobalProgress();
+                }
             } else {
-                playSound('wrong');
-                btn.className = "btn-tv p-4 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 text-left opacity-70";
+                playAudio('correct');
             }
         }
 
-        // --- TAB 3: DIGITAL LIFE DATA & LOGIC ---
-        const techVerbs = [
-            { verb: 'BROWSE', icon: 'fa-compass', desc: 'Browse the internet / websites' },
-            { verb: 'POST', icon: 'fa-share-nodes', desc: 'Post photos / comments on social media' },
-            { verb: 'SEND', icon: 'fa-paper-plane', desc: 'Send text / voice messages' },
-            { verb: 'DOWNLOAD', icon: 'fa-circle-arrow-down', desc: 'Download games / apps / files' },
-            { verb: 'UPLOAD', icon: 'fa-circle-arrow-up', desc: 'Upload videos / photos to cloud' }
+        // --- TAB 2: PHYSICAL APPEARANCE DATA & LOGIC ---
+        const appearanceTerms = [
+            { id: 'app1', label: 'Wrinkles', hint: 'Lines on elderly skin / around eyes', icon: 'fa-user-clock', correct: 'wrinkles' },
+            { id: 'app2', label: 'Dimples', hint: 'Small indents on cheeks when smiling', icon: 'fa-face-smile-wink', correct: 'dimples' },
+            { id: 'app3', label: 'Freckles', hint: 'Small brown spots on nose and cheeks', icon: 'fa-sun', correct: 'freckles' },
+            { id: 'app4', label: 'Bald', hint: 'Having little or no hair on the head', icon: 'fa-user-ninja', correct: 'bald' },
+            { id: 'app5', label: 'Beauty Spot', hint: 'A small natural dark mole on the face', icon: 'fa-circle-dot', correct: 'beauty spot' },
+            { id: 'app6', label: 'Flawless Skin', hint: 'Smooth skin without spots or blemishes', icon: 'fa-sparkles', correct: 'flawless skin' }
         ];
 
-        let techQuiz = [
-            {
-                q: '1. Whenever I travel, I take a selfie and _____ it on social network sites.',
-                answer: 'POST',
-                options: ['POST', 'DOWNLOAD', 'BROWSE']
-            },
-            {
-                q: '2. Late at night, I like to _____ the internet for new gaming news.',
-                answer: 'BROWSE',
-                options: ['SEND', 'BROWSE', 'UPLOAD']
-            },
-            {
-                q: '3. I need fast Wi-Fi so I can _____ this new 2GB game onto my tablet.',
-                answer: 'DOWNLOAD',
-                options: ['DOWNLOAD', 'POST', 'SEND']
-            },
-            {
-                q: '4. Don\'t forget to _____ your video project to Google Drive before midnight.',
-                answer: 'UPLOAD',
-                options: ['UPLOAD', 'BROWSE', 'POST']
-            },
-            {
-                q: '5. Can you _____ me a text message when you arrive at school?',
-                answer: 'SEND',
-                options: ['SEND', 'DOWNLOAD', 'UPLOAD']
-            },
-            {
-                q: '6. I want to _____ for cool new wallpapers on Google.',
-                answer: 'SEARCH',
-                options: ['SEARCH', 'POST', 'SEND']
-            },
-            {
-                q: '7. We like to _____ live gaming streams on Twitch during the weekend.',
-                answer: 'STREAM',
-                options: ['STREAM', 'BROWSE', 'SEND']
-            },
-            {
-                q: '8. Make sure to _____ the PDF document to the email before sending it.',
-                answer: 'ATTACH',
-                options: ['ATTACH', 'UPLOAD', 'POST']
-            },
-            {
-                q: '9. She loves to _____ interesting news articles on social media with her friends.',
-                answer: 'SHARE',
-                options: ['SHARE', 'DOWNLOAD', 'BROWSE']
-            },
-            {
-                q: '10. Always remember to _____ out of your computer account in the school lab.',
-                answer: 'LOG OUT',
-                options: ['LOG OUT', 'UPLOAD', 'SEND']
-            }
-        ];
+        let userAppAns = {};
 
-        function renderTechData() {
-            const verbsGrid = document.getElementById('tech-verbs-grid');
-            if(verbsGrid) {
-                verbsGrid.innerHTML = techVerbs.map(v => `
-                    <div class="bg-slate-900/90 border-2 border-cyan-500/30 p-4 rounded-2xl text-center space-y-2">
-                        <div class="w-12 h-12 bg-cyan-500/20 text-cyan-300 rounded-xl flex items-center justify-center mx-auto text-2xl">
-                            <i class="fa-solid ${v.icon}"></i>
+        function renderAppearance() {
+            const grid = document.getElementById('appearance-grid');
+            grid.innerHTML = appearanceTerms.map(t => `
+                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-lg border border-pink-500/30">
+                            <i class="fa-solid ${t.icon}"></i>
                         </div>
-                        <div class="font-black text-lg text-white">${v.verb}</div>
-                        <div class="text-xs text-slate-400">${v.desc}</div>
-                    </div>
-                `).join('');
-            }
-
-            const qContainer = document.getElementById('tech-questions-container');
-            if(qContainer) {
-                qContainer.innerHTML = techQuiz.map((item) => `
-                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-                        <p class="text-lg font-bold text-slate-200">${item.q}</p>
-                        <div class="flex flex-wrap gap-3">
-                            ${item.options.map(opt => `
-                                <button onclick="checkTechChoice(this, '${opt}', '${item.answer}')" class="btn-tv px-6 py-2 bg-slate-800 hover:bg-cyan-600 text-white font-extrabold text-base rounded-xl border border-slate-600">
-                                    ${opt}
-                                </button>
-                            `).join('')}
+                        <div>
+                            <div class="font-bold text-white text-sm">${t.hint}</div>
+                            <div class="text-xs text-slate-400">Match the correct feature:</div>
                         </div>
                     </div>
-                `).join('');
-            }
+                    <select onchange="userAppAns['${t.id}'] = this.value" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold p-2.5 rounded-xl focus:border-pink-500 focus:outline-none">
+                        <option value="">-- Select Feature --</option>
+                        ${appearanceTerms.map(opt => `<option value="${opt.correct}">${opt.label}</option>`).join('')}
+                    </select>
+                    <div id="app-fb-${t.id}" class="text-xs font-bold hidden"></div>
+                </div>
+            `).join('');
+
+            // Age expressions
+            const ageContainer = document.getElementById('age-questions-container');
+            ageContainer.innerHTML = `
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
+                    <p class="text-xs font-semibold text-slate-200">How to describe someone who is around 42 years old?</p>
+                    <div class="flex gap-2">
+                        <button onclick="selectAgeOpt(this, 'fortyish')" class="age-btn px-3 py-1.5 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg border border-slate-700">Fortyish</button>
+                        <button onclick="selectAgeOpt(this, 'fifties')" class="age-btn px-3 py-1.5 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg border border-slate-700">In her fifties</button>
+                    </div>
+                </div>
+            `;
         }
 
-        function checkTechChoice(btn, selected, correct) {
-            if(selected === correct) {
-                playSound('correct');
-                btn.className = "btn-tv px-6 py-2 bg-cyan-500 text-slate-950 font-black text-base rounded-xl border-2 border-cyan-300 shadow-lg";
+        let selectedAge = '';
+        function selectAgeOpt(btn, val) {
+            playAudio('click');
+            document.querySelectorAll('.age-btn').forEach(b => b.className = "age-btn px-3 py-1.5 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg border border-slate-700");
+            btn.className = "age-btn px-3 py-1.5 bg-pink-500 text-white font-black text-xs rounded-lg border border-pink-400";
+            selectedAge = val;
+        }
+
+        function resetAppearance() {
+            playAudio('click');
+            userAppAns = {};
+            selectedAge = '';
+            renderAppearance();
+        }
+
+        function checkAppearance() {
+            let count = 0;
+            appearanceTerms.forEach(t => {
+                const fb = document.getElementById(`app-fb-${t.id}`);
+                fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                if(userAppAns[t.id] === t.correct) {
+                    count++;
+                    fb.classList.add('text-emerald-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correct (${t.label})`;
+                } else {
+                    fb.classList.add('text-rose-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Answer: ${t.label}`;
+                }
+            });
+
+            if(selectedAge === 'fortyish') count++;
+
+            document.getElementById('badge-appearance').innerText = `${count}/6`;
+            if(count >= 6) {
+                playAudio('win');
+                if(!completedSections.appearance) {
+                    completedSections.appearance = true;
+                    addXP(100);
+                    updateGlobalProgress();
+                }
             } else {
-                playSound('wrong');
-                btn.className = "btn-tv px-6 py-2 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 opacity-60";
+                playAudio('correct');
             }
         }
 
-        // --- TAB 4: ORDER OF ADJECTIVES DATA & LOGIC ---
-        // Formula Sequence: 1. Opinion -> 2. Color -> 3. Pattern -> 4. Material -> 5. Style/Type
-        let adjItems = [
+        // --- TAB 3: ORDER OF ADJECTIVES DATA & LOGIC ---
+        const adjOrderItems = [
             {
-                title: "Fashion Item #1",
-                item: "JACKET",
-                correctChain: ["cool", "black", "striped", "leather", "biker"],
-                scrambled: ["striped", "biker", "cool", "leather", "black"],
-                types: { cool: "Opinion", black: "Color", striped: "Pattern", leather: "Material", biker: "Style" },
-                selected: []
+                id: 'ao1',
+                prompt: "She bought a ____________ coat.",
+                correct: ["beautiful", "warm", "woolen"],
+                scrambled: ["warm", "woolen", "beautiful"],
+                targetItem: "coat"
             },
             {
-                title: "Fashion Item #2",
-                item: "SHIRT",
-                correctChain: ["beautiful", "red", "spotted", "silk", "casual"],
-                scrambled: ["red", "beautiful", "casual", "silk", "spotted"],
-                types: { beautiful: "Opinion", red: "Color", spotted: "Pattern", silk: "Material", casual: "Style" },
-                selected: []
+                id: 'ao2',
+                prompt: "He was wearing ____________ trousers.",
+                correct: ["stylish", "striped", "cotton"],
+                scrambled: ["striped", "cotton", "stylish"],
+                targetItem: "trousers"
             },
             {
-                title: "Fashion Item #3",
-                item: "DRESS",
-                correctChain: ["elegant", "blue", "floral", "cotton", "summer"],
-                scrambled: ["cotton", "blue", "summer", "elegant", "floral"],
-                types: { elegant: "Opinion", blue: "Color", floral: "Pattern", cotton: "Material", summer: "Style" },
-                selected: []
+                id: 'ao3',
+                prompt: "I found an ____________ sweater.",
+                correct: ["ugly", "grey", "polka dot"],
+                scrambled: ["polka dot", "ugly", "grey"],
+                targetItem: "sweater"
             },
             {
-                title: "Fashion Item #4",
-                item: "SNEAKERS",
-                correctChain: ["awesome", "white", "plain", "canvas", "sports"],
-                scrambled: ["sports", "awesome", "plain", "white", "canvas"],
-                types: { awesome: "Opinion", white: "Color", plain: "Pattern", canvas: "Material", sports: "Style" },
-                selected: []
+                id: 'ao4',
+                prompt: "Look at those ____________ sneakers!",
+                correct: ["fantastic", "white", "high-top"],
+                scrambled: ["high-top", "fantastic", "white"],
+                targetItem: "sneakers"
             },
             {
-                title: "Fashion Item #5",
-                item: "HAT",
-                correctChain: ["lovely", "brown", "checked", "wool", "vintage"],
-                scrambled: ["wool", "checked", "vintage", "lovely", "brown"],
-                types: { lovely: "Opinion", brown: "Color", checked: "Pattern", wool: "Material", vintage: "Style" },
-                selected: []
-            },
-            {
-                title: "Fashion Item #6",
-                item: "COAT",
-                correctChain: ["stylish", "gray", "plaid", "denim", "winter"],
-                scrambled: ["plaid", "stylish", "winter", "gray", "denim"],
-                types: { stylish: "Opinion", gray: "Color", plaid: "Pattern", denim: "Material", winter: "Style" },
-                selected: []
+                id: 'ao5',
+                prompt: "She wore a ____________ skirt to the party.",
+                correct: ["lovely", "floral", "mini"],
+                scrambled: ["mini", "lovely", "floral"],
+                targetItem: "skirt"
             }
         ];
 
-        function renderAdjGame() {
-            const container = document.getElementById('adj-cards-container');
-            if(!container) return;
+        let userAdjOrder = { ao1: [], ao2: [], ao3: [], ao4: [], ao5: [] };
 
-            container.innerHTML = adjItems.map((adj, itemIdx) => `
-                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-slate-700 space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                        <span class="text-xs font-black uppercase text-pink-400 bg-pink-950/60 px-3 py-1 rounded-full border border-pink-500/30">
-                            ${adj.title}
-                        </span>
-                        <span class="heading-font text-2xl font-black text-amber-300">Target Item: ${adj.item}</span>
-                    </div>
-
-                    <!-- Target Sentence Dropzone -->
-                    <div class="bg-slate-950 p-4 rounded-xl border-2 border-dashed border-pink-400/50 min-h-[70px] flex flex-wrap items-center justify-center gap-2">
-                        ${adj.selected.length === 0 
-                            ? `<span class="text-slate-500 italic text-sm">Click adjectives in correct order (1. Opinion → 2. Color → 3. Pattern → 4. Material → 5. Style)</span>`
-                            : adj.selected.map((word, wIdx) => `
-                                <button onclick="removeAdjWord(${itemIdx}, ${wIdx})" class="px-4 py-2 bg-pink-500 text-slate-950 font-black rounded-xl text-base shadow flex items-center gap-1.5 btn-tv">
-                                    <span>${word}</span>
-                                    <span class="text-[10px] bg-slate-950/40 text-white px-1.5 py-0.5 rounded">${adj.types[word] || ''}</span>
-                                    <i class="fa-solid fa-xmark text-xs opacity-70"></i>
+        function renderAdjOrder() {
+            const container = document.getElementById('adj-order-container');
+            container.innerHTML = adjOrderItems.map(item => `
+                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <p class="text-sm font-bold text-slate-200">${item.prompt}</p>
+                    
+                    <!-- Drop/Selected Zone -->
+                    <div id="adj-zone-${item.id}" class="min-h-[50px] p-3 bg-slate-900 rounded-xl border-2 border-dashed border-cyan-500/40 flex flex-wrap gap-2 items-center">
+                        ${userAdjOrder[item.id].length === 0 
+                            ? `<span class="text-xs text-slate-500 italic">Click options below in correct order...</span>` 
+                            : userAdjOrder[item.id].map((w, idx) => `
+                                <button onclick="removeAdjToken('${item.id}', ${idx})" class="px-3 py-1 bg-cyan-500 text-slate-950 font-black text-xs rounded-lg flex items-center gap-1">
+                                    <span>${w}</span> <i class="fa-solid fa-xmark text-[10px]"></i>
                                 </button>
                             `).join('')
                         }
                     </div>
 
-                    <!-- Scrambled Words -->
-                    <div class="flex flex-wrap justify-center gap-2">
-                        ${adj.scrambled.map((w, wIdx) => {
-                            const isSelected = adj.selected.includes(w);
+                    <!-- Available Choices -->
+                    <div class="flex flex-wrap gap-2">
+                        ${item.scrambled.map(w => {
+                            const selected = userAdjOrder[item.id].includes(w);
                             return `
-                                <button onclick="selectAdjWord(${itemIdx}, '${w}')" ${isSelected ? 'disabled' : ''} 
-                                        class="btn-tv px-4 py-2 ${isSelected ? 'opacity-30 bg-slate-800 text-slate-500' : 'bg-slate-800 hover:bg-pink-600 text-pink-300 hover:text-white'} font-bold text-base rounded-xl border border-slate-600">
+                                <button onclick="addAdjToken('${item.id}', '${w}')" ${selected ? 'disabled' : ''} class="px-3 py-1.5 ${selected ? 'opacity-30 bg-slate-800 text-slate-500' : 'bg-slate-800 text-cyan-300 hover:bg-cyan-600 hover:text-white'} font-bold text-xs rounded-lg border border-slate-700 transition">
                                     ${w}
                                 </button>
                             `;
                         }).join('')}
                     </div>
 
-                    <!-- Actions & Feedback -->
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
-                        <button onclick="resetAdjItem(${itemIdx})" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
-                        </button>
-                        
-                        <div id="adj-feedback-${itemIdx}" class="text-sm font-extrabold hidden px-3 py-1 rounded-lg"></div>
-
-                        <button onclick="checkAdjAnswer(${itemIdx})" class="px-5 py-2 bg-pink-500 hover:bg-pink-400 text-slate-950 font-black rounded-xl text-sm shadow btn-tv">
-                            Check Sequence
-                        </button>
-                    </div>
+                    <div id="adj-fb-${item.id}" class="text-xs font-bold hidden"></div>
                 </div>
             `).join('');
         }
 
-        function selectAdjWord(itemIdx, word) {
-            playSound('click');
-            adjItems[itemIdx].selected.push(word);
-            renderAdjGame();
+        function addAdjToken(id, word) {
+            playAudio('click');
+            userAdjOrder[id].push(word);
+            renderAdjOrder();
         }
 
-        function removeAdjWord(itemIdx, wordIdx) {
-            playSound('click');
-            adjItems[itemIdx].selected.splice(wordIdx, 1);
-            renderAdjGame();
+        function removeAdjToken(id, idx) {
+            playAudio('click');
+            userAdjOrder[id].splice(idx, 1);
+            renderAdjOrder();
         }
 
-        function resetAdjItem(itemIdx) {
-            playSound('click');
-            adjItems[itemIdx].selected = [];
-            renderAdjGame();
+        function resetAdjOrder() {
+            playAudio('click');
+            userAdjOrder = { ao1: [], ao2: [], ao3: [], ao4: [], ao5: [] };
+            renderAdjOrder();
         }
 
-        function checkAdjAnswer(itemIdx) {
-            const adj = adjItems[itemIdx];
-            const feedback = document.getElementById(`adj-feedback-${itemIdx}`);
-            feedback.classList.remove('hidden', 'bg-emerald-500/20', 'text-emerald-300', 'bg-rose-500/20', 'text-rose-300');
+        function checkAdjOrder() {
+            let correctCount = 0;
+            adjOrderItems.forEach(item => {
+                const fb = document.getElementById(`adj-fb-${item.id}`);
+                fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                if(JSON.stringify(userAdjOrder[item.id]) === JSON.stringify(item.correct)) {
+                    correctCount++;
+                    fb.classList.add('text-emerald-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-check"></i> Perfect Order! (${item.correct.join(' ')})`;
+                } else {
+                    fb.classList.add('text-rose-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Expected: ${item.correct.join(' ')}`;
+                }
+            });
 
-            if (JSON.stringify(adj.selected) === JSON.stringify(adj.correctChain)) {
-                playSound('correct');
-                feedback.classList.add('bg-emerald-500/20', 'text-emerald-300');
-                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Perfect Order! "${adj.selected.join(' ')} ${adj.item}"`;
+            document.getElementById('badge-adj-order').innerText = `${correctCount}/5`;
+            if(correctCount === 5) {
+                playAudio('win');
+                if(!completedSections.adjOrder) {
+                    completedSections.adjOrder = true;
+                    addXP(100);
+                    updateGlobalProgress();
+                }
             } else {
-                playSound('wrong');
-                feedback.classList.add('bg-rose-500/20', 'text-rose-300');
-                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect sequence! Correct: ${adj.correctChain.join(' ')}`;
+                playAudio('correct');
             }
         }
 
-        // --- TAB 5: GERUND VS INFINITIVE DATA & LOGIC ---
-        let gerundData = [
+        // --- TAB 4: GERUND VS INFINITIVE DATA & LOGIC ---
+        const verbData = [
             {
-                q: "1. She avoids _____ (talk) to strangers on social media.",
-                correct: "talking",
-                rule: "Verb 'avoid' requires Gerund (-ing)",
-                options: ["talking", "to talk", "talk"]
+                id: 'v1',
+                sentence: "1. Mia really enjoys _____________ videos with her new smartphone. (make)",
+                correct: "making",
+                options: ["making", "to make", "make"],
+                rule: "Enjoys + Gerund (-ing)"
             },
             {
-                q: "2. We decided _____ (visit) our grandparents this weekend.",
-                correct: "to visit",
-                rule: "Verb 'decide' requires Infinitive (to + verb)",
-                options: ["to visit", "visiting", "visit"]
+                id: 'v2',
+                sentence: "2. _____________ a new app can be a lot of fun. (create)",
+                correct: "Creating",
+                options: ["Creating", "To create", "Create"],
+                rule: "Gerund as Subject (-ing)"
             },
             {
-                q: "3. Are you interested in _____ (learn) how to code games?",
-                correct: "learning",
-                rule: "After preposition 'in', use Gerund (-ing)",
-                options: ["learning", "to learn", "learn"]
+                id: 'v3',
+                sentence: "3. Daniel decided _____________ a photography account on social media. (start)",
+                correct: "to start",
+                options: ["to start", "starting", "start"],
+                rule: "Decided + Infinitive (to + verb)"
             },
             {
-                q: "4. He promised _____ (finish) his English homework before 8 PM.",
-                correct: "to finish",
-                rule: "Verb 'promise' requires Infinitive (to + verb)",
-                options: ["to finish", "finishing", "finished"]
+                id: 'v4',
+                sentence: "4. My parents don't let me _____________ online games during the week. (play)",
+                correct: "play",
+                options: ["play", "to play", "playing"],
+                rule: "Let + object + Base verb (without to)"
             },
             {
-                q: "5. I really enjoy _____ (listen) to music while studying.",
-                correct: "listening",
-                rule: "Verb 'enjoy' requires Gerund (-ing)",
-                options: ["listening", "to listen", "listen"]
+                id: 'v5',
+                sentence: "5. Sofia is very good at _____________ funny comments on social media. (write)",
+                correct: "writing",
+                options: ["writing", "to write", "write"],
+                rule: "After Preposition ('at') + Gerund (-ing)"
             },
             {
-                q: "6. They hope _____ (pass) the Mind Flow prova periódica on 04/09.",
-                correct: "to pass",
-                rule: "Verb 'hope' requires Infinitive (to + verb)",
-                options: ["to pass", "passing", "pass"]
-            },
-            {
-                q: "7. She is good at _____ (draw) digital illustrations.",
-                correct: "drawing",
-                rule: "After preposition 'at', use Gerund (-ing)",
-                options: ["drawing", "to draw", "draw"]
-            },
-            {
-                q: "8. Do you mind _____ (open) the window for a minute?",
-                correct: "opening",
-                rule: "Verb 'mind' requires Gerund (-ing)",
-                options: ["opening", "to open", "open"]
-            },
-            {
-                q: "9. Lucas refused _____ (give) his password to anyone.",
-                correct: "to give",
-                rule: "Verb 'refuse' requires Infinitive (to + verb)",
-                options: ["to give", "giving", "give"]
-            },
-            {
-                q: "10. Don't forget to practice _____ (speak) English every day!",
-                correct: "speaking",
-                rule: "Verb 'practise/practice' requires Gerund (-ing)",
-                options: ["speaking", "to speak", "spoke"]
+                id: 'v6',
+                sentence: "6. I just want _____________ this photo on my profile. (share)",
+                correct: "to share",
+                options: ["to share", "sharing", "share"],
+                rule: "Want + Infinitive (to + verb)"
             }
         ];
 
-        function renderGerundData() {
-            const container = document.getElementById('gerund-questions-container');
-            if(!container) return;
-            container.innerHTML = gerundData.map((item) => `
+        let userVerbs = {};
+
+        function renderVerbs() {
+            const container = document.getElementById('verb-questions-container');
+            container.innerHTML = verbData.map(q => `
                 <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                        <p class="text-lg font-bold text-slate-100">${item.q}</p>
-                        <span class="text-xs font-semibold text-purple-400 italic bg-purple-950/60 px-2 py-0.5 rounded border border-purple-500/30 shrink-0">
-                            Rule Hint: ${item.rule}
-                        </span>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        ${item.options.map(opt => `
-                            <button onclick="checkGerundChoice(this, '${opt.replace(/'/g, "\\'")}', '${item.correct.replace(/'/g, "\\'")}')" 
-                                    class="btn-tv px-6 py-2.5 bg-slate-800 hover:bg-purple-600 text-white font-extrabold text-base rounded-xl border border-slate-600 transition">
+                    <p class="text-sm md:text-base font-semibold text-slate-200">${q.sentence}</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${q.options.map(opt => `
+                            <button onclick="selectVerbOpt(this, '${q.id}', '${opt}')" class="v-opt-${q.id} px-4 py-2 bg-slate-900 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
                                 ${opt}
                             </button>
                         `).join('')}
                     </div>
+                    <div id="v-fb-${q.id}" class="text-xs font-bold hidden"></div>
                 </div>
             `).join('');
         }
 
-        function checkGerundChoice(btn, selected, correct) {
-            if(selected === correct) {
-                playSound('correct');
-                btn.className = "btn-tv px-6 py-2.5 bg-purple-600 text-white font-black text-base rounded-xl border-2 border-purple-300 shadow-lg";
+        function selectVerbOpt(btn, qId, val) {
+            playAudio('click');
+            document.querySelectorAll(`.v-opt-${qId}`).forEach(b => {
+                b.className = "v-opt-" + qId + " px-4 py-2 bg-slate-900 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition";
+            });
+            btn.className = "v-opt-" + qId + " px-4 py-2 bg-emerald-500 text-slate-950 font-black text-xs rounded-xl border border-emerald-400 shadow-lg transition";
+            userVerbs[qId] = val;
+        }
+
+        function resetVerbs() {
+            playAudio('click');
+            userVerbs = {};
+            renderVerbs();
+        }
+
+        function checkVerbs() {
+            let count = 0;
+            verbData.forEach(q => {
+                const fb = document.getElementById(`v-fb-${q.id}`);
+                fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                if(userVerbs[q.id] === q.correct) {
+                    count++;
+                    fb.classList.add('text-emerald-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correct! [Rule: ${q.rule}]`;
+                } else {
+                    fb.classList.add('text-rose-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Answer: ${q.correct} [${q.rule}]`;
+                }
+            });
+
+            document.getElementById('badge-verbs').innerText = `${count}/6`;
+            if(count === 6) {
+                playAudio('win');
+                if(!completedSections.verbs) {
+                    completedSections.verbs = true;
+                    addXP(100);
+                    updateGlobalProgress();
+                }
             } else {
-                playSound('wrong');
-                btn.className = "btn-tv px-6 py-2.5 bg-rose-600 text-white font-black text-base rounded-xl border-2 border-rose-300 opacity-60";
+                playAudio('correct');
             }
         }
 
-        // --- RANDOM PICKER MODAL ---
-        function openPickerModal() {
-            playSound('click');
-            document.getElementById('picker-modal').classList.remove('hidden');
+        // --- TAB 5: READING DATA & LOGIC ---
+        const readingData = [
+            { id: 'r1', text: "1. ACE schools teach languages.", correct: "True" },
+            { id: 'r2', text: "2. ACE schools only have schools in the UK.", correct: "False" },
+            { id: 'r3', text: "3. ACE schools teach mostly adults.", correct: "False" },
+            { id: 'r4', text: "4. There are more than 12 students in each class.", correct: "False" },
+            { id: 'r5', text: "5. Courses last between one week and two months.", correct: "True" },
+            { id: 'r6', text: "6. Students have to stay in hotels when studying at ACE schools.", correct: "False" },
+            { id: 'r7', text: "7. There is always a teacher or activity monitor to support the students.", correct: "True" },
+            { id: 'r8', text: "8. There are many activities to do after the language classes.", correct: "True" }
+        ];
+
+        let userReading = {};
+
+        function renderReading() {
+            const container = document.getElementById('reading-questions-container');
+            container.innerHTML = readingData.map(q => `
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span class="text-xs md:text-sm font-semibold text-slate-200">${q.text}</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="selectReadingOpt(this, '${q.id}', 'True')" class="r-btn-${q.id} px-3 py-1 bg-slate-900 text-slate-300 font-bold text-xs rounded-lg border border-slate-700">True</button>
+                        <button onclick="selectReadingOpt(this, '${q.id}', 'False')" class="r-btn-${q.id} px-3 py-1 bg-slate-900 text-slate-300 font-bold text-xs rounded-lg border border-slate-700">False</button>
+                    </div>
+                </div>
+                <div id="r-fb-${q.id}" class="text-xs font-bold hidden pl-2"></div>
+            `).join('');
         }
 
-        function closePickerModal() {
-            playSound('click');
-            document.getElementById('picker-modal').classList.add('hidden');
+        function selectReadingOpt(btn, qId, val) {
+            playAudio('click');
+            document.querySelectorAll(`.r-btn-${qId}`).forEach(b => b.className = "r-btn-" + qId + " px-3 py-1 bg-slate-900 text-slate-300 font-bold text-xs rounded-lg border border-slate-700");
+            btn.className = "r-btn-" + qId + " px-3 py-1 bg-purple-600 text-white font-black text-xs rounded-lg border border-purple-400";
+            userReading[qId] = val;
         }
 
-        function spinPicker(type) {
-            playSound('click');
-            const display = document.getElementById('picker-display');
-            let counter = 0;
-            const interval = setInterval(() => {
-                if(type === 'student') {
-                    display.innerText = `Student #${Math.floor(Math.random() * 30) + 1}`;
+        function resetReading() {
+            playAudio('click');
+            userReading = {};
+            renderReading();
+        }
+
+        function checkReading() {
+            let count = 0;
+            readingData.forEach(q => {
+                const fb = document.getElementById(`r-fb-${q.id}`);
+                fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                if(userReading[q.id] === q.correct) {
+                    count++;
+                    fb.classList.add('text-emerald-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correct! (${q.correct})`;
                 } else {
-                    const teams = ['Team Red 🔴', 'Team Blue 🔵', 'Pair #1 👥', 'Pair #2 👥', 'Pair #3 👥'];
-                    display.innerText = teams[Math.floor(Math.random() * teams.length)];
+                    fb.classList.add('text-rose-400');
+                    fb.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorrect. Expected: ${q.correct}`;
                 }
-                counter++;
-                if(counter > 15) {
-                    clearInterval(interval);
-                    playSound('fanfare');
+            });
+
+            document.getElementById('badge-reading').innerText = `${count}/8`;
+            if(count === 8) {
+                playAudio('win');
+                if(!completedSections.reading) {
+                    completedSections.reading = true;
+                    addXP(100);
+                    updateGlobalProgress();
                 }
-            }, 80);
+            } else {
+                playAudio('correct');
+            }
         }
 
-        // --- APPLICATION INITIALIZATION ---
-        window.onload = function() {
-            // Randomize order of questions AND options on application startup
-            futureData = shuffleArray(futureData);
-            rulesData = shuffleArray(rulesData).map(r => ({
-                ...r,
-                options: shuffleArray(r.options)
-            }));
-            techQuiz = shuffleArray(techQuiz).map(t => ({
-                ...t,
-                options: shuffleArray(t.options)
-            }));
-            adjItems = shuffleArray(adjItems).map(a => ({
-                ...a,
-                scrambled: shuffleArray(a.scrambled)
-            }));
-            gerundData = shuffleArray(gerundData).map(g => ({
-                ...g,
-                options: shuffleArray(g.options)
-            }));
+        // --- TAB 6: FULL EXAM SIMULATOR LOGIC ---
+        const simulatorPool = [
+            {
+                q: "Working as a teacher and helping students achieve goals can be extremely ____________.",
+                options: ["rewarding", "monotonous", "stressful", "demanding"],
+                answer: "rewarding"
+            },
+            {
+                q: "What term describes lines on elderly skin around eyes?",
+                options: ["Wrinkles", "Freckles", "Dimples", "Beauty Spot"],
+                answer: "Wrinkles"
+            },
+            {
+                q: "Choose the correct adjective order: She bought a ____________ coat.",
+                options: ["beautiful warm woolen", "warm beautiful woolen", "woolen beautiful warm", "warm woolen beautiful"],
+                answer: "beautiful warm woolen"
+            },
+            {
+                q: "Mia really enjoys ____________ videos with her smartphone.",
+                options: ["making", "to make", "make", "made"],
+                answer: "making"
+            },
+            {
+                q: "True or False: ACE schools teach mostly adults.",
+                options: ["False", "True"],
+                answer: "False"
+            },
+            {
+                q: "Daniel decided ____________ a photography account.",
+                options: ["to start", "starting", "start", "started"],
+                answer: "to start"
+            },
+            {
+                q: "Choose the correct order: He was wearing ____________ trousers.",
+                options: ["stylish striped cotton", "cotton striped stylish", "striped stylish cotton", "stylish cotton striped"],
+                answer: "stylish striped cotton"
+            },
+            {
+                q: "My parents don't let me ____________ online games during the week.",
+                options: ["play", "to play", "playing", "played"],
+                answer: "play"
+            },
+            {
+                q: "Checking the same documents every day can become very ____________.",
+                options: ["monotonous", "fun", "rewarding", "easy"],
+                answer: "monotonous"
+            },
+            {
+                q: "Sofia is very good at ____________ funny comments.",
+                options: ["writing", "to write", "write", "wrote"],
+                answer: "writing"
+            }
+        ];
 
-            // Initial render calls
-            renderFutureEx();
-            renderRulesData();
-            renderTechData();
-            renderAdjGame();
-            renderGerundData();
+        let simIndex = 0;
+        let simScore = 0;
+
+        function startExamSimulator() {
+            playAudio('click');
+            simIndex = 0;
+            simScore = 0;
+            document.getElementById('sim-start-box').classList.add('hidden');
+            document.getElementById('sim-results-box').classList.add('hidden');
+            document.getElementById('sim-quiz-box').classList.remove('hidden');
+            renderSimQuestion();
+        }
+
+        function renderSimQuestion() {
+            const current = simulatorPool[simIndex];
+            document.getElementById('sim-q-indicator').innerText = `Question ${simIndex + 1} of ${simulatorPool.length}`;
+            document.getElementById('sim-score-counter').innerText = `Score: ${simScore}`;
+            
+            document.getElementById('sim-question-card').innerHTML = `
+                <div class="text-base font-bold text-white">${current.q}</div>
+            `;
+
+            document.getElementById('sim-options-grid').innerHTML = current.options.map(opt => `
+                <button onclick="checkSimChoice(this, '${opt}', '${current.answer}')" class="p-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl border border-slate-700 text-left transition btn-interact">
+                    ${opt}
+                </button>
+            `).join('');
+
+            const fb = document.getElementById('sim-feedback');
+            fb.className = "hidden p-4 rounded-xl text-center font-bold text-sm";
+            document.getElementById('sim-next-btn').classList.add('hidden');
+        }
+
+        function checkSimChoice(btn, selected, correct) {
+            const buttons = document.querySelectorAll('#sim-options-grid button');
+            buttons.forEach(b => b.disabled = true);
+
+            const fb = document.getElementById('sim-feedback');
+            fb.classList.remove('hidden');
+
+            if(selected === correct) {
+                playAudio('correct');
+                simScore += 10;
+                btn.className = "p-4 bg-emerald-600 text-white font-black text-sm rounded-xl border border-emerald-400 text-left shadow-lg";
+                fb.className = "p-4 rounded-xl text-center font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct Answer! (+10 XP)`;
+            } else {
+                playAudio('wrong');
+                btn.className = "p-4 bg-rose-600 text-white font-black text-sm rounded-xl border border-rose-400 text-left opacity-80";
+                fb.className = "p-4 rounded-xl text-center font-bold text-sm bg-rose-500/20 text-rose-300 border border-rose-500/40";
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect! Correct Answer: ${correct}`;
+            }
+
+            document.getElementById('sim-score-counter').innerText = `Score: ${simScore}`;
+            document.getElementById('sim-next-btn').classList.remove('hidden');
+        }
+
+        function nextSimQuestion() {
+            playAudio('click');
+            simIndex++;
+            if(simIndex < simulatorPool.length) {
+                renderSimQuestion();
+            } else {
+                finishExamSimulator();
+            }
+        }
+
+        function finishExamSimulator() {
+            playAudio('win');
+            document.getElementById('sim-quiz-box').classList.add('hidden');
+            document.getElementById('sim-results-box').classList.remove('hidden');
+
+            const pct = (simScore / (simulatorPool.length * 10)) * 100;
+            document.getElementById('sim-final-score-title').innerText = `Mock Exam Score: ${simScore} XP (${pct}%)`;
+            
+            if(pct >= 80) {
+                document.getElementById('sim-final-msg').innerText = "🎉 Outstanding! You are 100% prepared to ace your Review Class 2 assessment!";
+            } else {
+                document.getElementById('sim-final-msg').innerText = "👍 Good try! Review the checklist tabs on the left and try again to improve your score.";
+            }
+
+            addXP(simScore);
+        }
+
+        // --- APP INITIALIZATION ---
+        window.onload = function() {
+            renderWorkAdj();
+            renderAppearance();
+            renderAdjOrder();
+            renderVerbs();
+            renderReading();
+            updateGlobalProgress();
         };
     </script>
 </body>
